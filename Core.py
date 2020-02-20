@@ -12,13 +12,14 @@ class hero(object):
     move_right = [py.image.load(os.path.join('sprites', 'hero_right_' + str(i) + '.png')) for i in sequence]
     move_left = [py.image.load(os.path.join('sprites', 'hero_left_' + str(i) + '.png')) for i in sequence]
     
-    def __init__(self, x, y, height, width, window, speed):
+    def __init__(self, x, y, height, width, window, speed, bg_width):
         self.x = x
         self.y = y
         self.height = height
         self.width = width
         self.window = window
         self.speed = speed
+        self.bg_width = bg_width
         self.move_count = 0
         self.last_dir = 1 # -1 to face left, 1 to face right
         self.r_bound = width - (width//4)
@@ -28,7 +29,7 @@ class hero(object):
 
         
     def draw(self):
-        
+        print(str(self.true_x))
         if self.last_dir == 1:
             self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
         else:
@@ -67,6 +68,12 @@ class hero(object):
             return True
         else:
             return False
+    def can_scroll_right(self):
+        if self.true_x + self.r_bound < self.bg_width:
+            return True
+        else:
+            return False
+        
 
 class scroller(object):
     
@@ -89,18 +96,19 @@ class scroller(object):
 
         player_moved = self.player.move(direction)
         if(player_moved == False):
-            if direction == 1 or self.player.can_scroll_left():
+            if (direction == 1 and self.player.can_scroll_right()) or (direction == -1 and self.player.can_scroll_left()):
                 self.x1 -= direction*self.speed
                 self.x2 -= direction*self.speed
                 
                 for scrollable in self.scrollables:
                     scrollable.move(direction*self.speed)
-                
+                """
                 if self.x1 < self.background.get_width() * -1:
                     self.x1 = self.background.get_width()
                     
                 if self.x2 < self.background.get_width() * -1:
                     self.x2 = self.background.get_width()
+                """
                 self.player.move(0)
                 self.player.update_truex(direction)
                 
