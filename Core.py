@@ -24,6 +24,16 @@ class hero(object):
         self.r_bound = width - (width//4)
         self.l_bound = width//4
         self.true_x = 0
+        self.attack_speed = 10
+
+        
+    def draw(self):
+        
+        if self.last_dir == 1:
+            self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
+        else:
+            self.window.blit(self.move_left[self.move_count%12], (self.x, self.y))
+        
     def move(self, direction):
         
         rtn = True
@@ -35,7 +45,7 @@ class hero(object):
                 self.update_truex(direction)
             else:
                 rtn = False
-            self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
+            
         elif direction == -1:
             if (self.x - self.speed) > self.l_bound:
                 self.last_dir = -1
@@ -44,23 +54,17 @@ class hero(object):
                 self.update_truex(direction)
             else: 
                 rtn = False
-            self.window.blit(self.move_left[self.move_count%12], (self.x, self.y))
+            
         else:
-            if(self.last_dir == 1):
-                self.move_count +=1
-                self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
-            else:
-                self.move_count += 1
-                self.window.blit(self.move_left[self.move_count%12], (self.x, self.y))
-        return rtn
-    
+            self.move_count += 1
+                
+        return rtn   
+
     def update_truex(self, direction):
         self.true_x += direction*self.speed
-        print(str(self.true_x))
     def can_scroll_left(self):
         if self.true_x > 0 :
             return True
-            print('yay')
         else:
             return False
 
@@ -81,7 +85,7 @@ class scroller(object):
         self.window.blit(self.background, (self.x2, 0))
         
     def move(self, direction):
-        self.draw()
+
         player_moved = self.player.move(direction)
         if(player_moved == False):
             if direction == 1 or self.player.can_scroll_left():
@@ -95,3 +99,32 @@ class scroller(object):
                     self.x2 = self.background.get_width()
                 self.player.move(0)
                 self.player.update_truex(direction)
+
+class star(object):
+    
+    def __init__(self, window, x, y, speed, direction):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.direction = direction
+        self.sequence = [1,1, 2,2, 3,3, 4,4, 5,5]
+        self.animation = [py.image.load(os.path.join('sprites', 'star' + str(i) + '.png')) for i in self.sequence]
+        self.move_count = 0
+        self.rect = py.Rect((x,y), (30, 30))
+        self.dead = False
+        self.window_width, _ = py.display.get_surface().get_size()
+        
+    def draw(self):
+        if not self.dead:
+            self.window.blit(self.animation[self.move_count%10], (self.x, self.y))
+    def move(self):
+        if not self.dead:
+            self.x += self.direction*self.speed
+            if self.x > 0 and self.x < self.window_width + 30:
+                self.rect.move_ip(self.direction*self.speed, 0)
+                self.move_count += 1
+            else:
+                self.dead = True
+
+        
