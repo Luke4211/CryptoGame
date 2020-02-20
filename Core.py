@@ -8,7 +8,7 @@ import os
 import pygame as py
 
 class hero(object):
-    sequence = [1,1,1,1,2,2,2,2,3,3,3,3]
+    sequence = [1,1,1,1, 2,2,2,2, 3,3,3,3]
     move_right = [py.image.load(os.path.join('sprites', 'hero_right_' + str(i) + '.png')) for i in sequence]
     move_left = [py.image.load(os.path.join('sprites', 'hero_left_' + str(i) + '.png')) for i in sequence]
     
@@ -78,8 +78,9 @@ class scroller(object):
         self.x2 = self.background.get_width()
         self.speed = speed
         self.draw()
+        self.scrollables = []
         
-
+    
     def draw(self):
         self.window.blit(self.background, (self.x1,  0))
         self.window.blit(self.background, (self.x2, 0))
@@ -92,6 +93,9 @@ class scroller(object):
                 self.x1 -= direction*self.speed
                 self.x2 -= direction*self.speed
                 
+                for scrollable in self.scrollables:
+                    scrollable.move(direction*self.speed)
+                
                 if self.x1 < self.background.get_width() * -1:
                     self.x1 = self.background.get_width()
                     
@@ -99,6 +103,10 @@ class scroller(object):
                     self.x2 = self.background.get_width()
                 self.player.move(0)
                 self.player.update_truex(direction)
+                
+    def add_scrollable(self, scrollable):
+        self.scrollables.append(scrollable)
+        
 
 class star(object):
     
@@ -127,7 +135,7 @@ class star(object):
             else:
                 self.dead = True
 
-class message(object):
+class sign(object):
     
     def __init__(self, window, x, y, message):
         self.window = window
@@ -142,14 +150,18 @@ class message(object):
         
         self.text_box = self.text.get_rect()
         
-        self.text_box.center = (self.x, self.y - 50)
+        self.text_box.center = (self.x, self.y - 35)
         self.image_box = self.sign.get_rect()
         self.image_box.center = (self.x, self.y)
         
     def draw(self):
         self.window.blit(self.sign, self.image_box)
         self.window.blit(self.text, self.text_box)
-        
+    
+    def move(self, amount):
+        self.x -= amount
+        self.text_box.center = (self.x, self.y - 35)
+        self.image_box.center = (self.x, self.y)
         
         
     

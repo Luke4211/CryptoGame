@@ -12,11 +12,15 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 5
 player = core.hero(250,500, H, W, window, speed)
+
+# Level ~ Haunted Wood Forest
 scroll = core.scroller(window, player, 'forest1', speed)
 
-msg = core.message(window, 200, 400, "Greetings!")
-
-drawers = [scroll, player, msg]
+msg1 = core.sign(window, 200, 400, "Haunted Wood Forest")
+msg2 = core.sign(window, 1200, 400, "Beware of Mad Wizard")
+scroll.add_scrollable(msg1)
+scroll.add_scrollable(msg2)
+drawers = [scroll, player, msg1, msg2]
 projectiles = []
 last_attack = 0
 run = True
