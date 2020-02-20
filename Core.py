@@ -1,8 +1,7 @@
 # -*- coding: utf-8 -*-
 """
-Created on Wed Feb 19 19:01:27 2020
-
-@author: lucas
+    Core.py ~ Contains classes for each object
+    Written by Luke Gorski
 """
 import os
 import pygame as py
@@ -18,7 +17,7 @@ class hero(object):
         self.height = height
         self.width = width
         self.window = window
-        self.speed = speed
+        self.speed = int(1.5*speed)
         self.bg_width = bg_width
         self.move_count = 0
         self.last_dir = 1 # -1 to face left, 1 to face right
@@ -26,6 +25,9 @@ class hero(object):
         self.l_bound = width//4
         self.true_x = 0
         self.attack_speed = 10
+        self.is_jump = False
+        self.y_speed = 0
+        self.y_jump_start = self.y
 
         
     def draw(self):
@@ -60,6 +62,20 @@ class hero(object):
             self.move_count += 1
                 
         return rtn   
+    
+    def jump(self):
+        if self.is_jump == False:
+            self.is_jump = True
+            self.y_speed = self.speed * 2 
+            self.y -= self.y_speed
+        else:
+            if self.y_jump_start <= self.y:
+                self.is_jump = False
+                self.y_speed = 0
+                self.y = self.y_jump_start
+            else:
+                self.y -= self.y_speed
+                self.y_speed -= 1
 
     def update_truex(self, direction):
         self.true_x += direction*self.speed
@@ -124,8 +140,7 @@ class star(object):
         self.y = y
         self.speed = speed
         self.direction = direction
-        self.sequence = [1,1, 2,2, 3,3, 4,4, 5,5]
-        self.animation = [py.image.load(os.path.join('sprites', 'star' + str(i) + '.png')) for i in self.sequence]
+        self.animation = [py.image.load(os.path.join('sprites', 'star' + str(i) + '.png')) for i in range(1,6)]
         self.move_count = 0
         self.rect = py.Rect((x,y), (30, 30))
         self.dead = False
@@ -133,7 +148,7 @@ class star(object):
         
     def draw(self):
         if not self.dead:
-            self.window.blit(self.animation[self.move_count%10], (self.x, self.y))
+            self.window.blit(self.animation[self.move_count%5], (self.x, self.y))
     def move(self):
         if not self.dead:
             self.x += self.direction*self.speed

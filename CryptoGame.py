@@ -1,4 +1,8 @@
 # -*- coding: utf-8 -*-
+"""
+    CryptoGame.py ~ Contains loops for each level
+    Written by Luke Gorski
+"""
 import pygame as py
 import Core as core
 
@@ -12,23 +16,23 @@ H, W = 750, 1050
 window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 5
-player = core.hero(250,500, H, W, window, speed, 3000)
+player = core.hero(250,500, H, W, window, speed, 4000)
 
 # Level ~ Haunted Wood Forest
 scroll = core.scroller(window, player, 'forest1', speed)
 
-msg1 = core.sign(window, 200, 400, "Haunted Wood Forest")
+msg1 = core.sign(window, 200, 400, "Caesar's Forest")
 msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard")
 scroll.add_scrollable(msg1)
 scroll.add_scrollable(msg2)
-drawers = [scroll, player, msg1, msg2]
+drawers = [scroll, msg1, msg2, player]
 projectiles = []
 last_attack = 0
 run = True
 
 
 while run:
-    clock.tick(50)
+    clock.tick(40)
 
     
     keys = py.key.get_pressed()
@@ -37,7 +41,11 @@ while run:
         scroll.move(1)
     if keys[py.K_a]:
         scroll.move(-1)
+    if keys[py.K_SPACE]:
+        player.jump()
     
+    if player.is_jump == True:
+        player.jump()
     for draw in drawers:
         draw.draw()
     if py.mouse.get_pressed()[0]:
