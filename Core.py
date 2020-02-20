@@ -127,4 +127,30 @@ class star(object):
             else:
                 self.dead = True
 
+class message(object):
+    
+    def __init__(self, window, x, y, message):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.message = message
+        self.active = True
+        self.sign = py.image.load(os.path.join('sprites', 'sign.png'))
+        font = py.font.Font(os.path.join('font', 'AncientModernTales.ttf'), 20)
+        
+        self.text = font.render(self.message, True, (0,0,0) )
+        
+        self.text_box = self.text.get_rect()
+        
+        self.text_box.center = (self.x, self.y - 50)
+        self.image_box = self.sign.get_rect()
+        self.image_box.center = (self.x, self.y)
+        
+    def draw(self):
+        self.window.blit(self.sign, self.image_box)
+        self.window.blit(self.text, self.text_box)
+        
+        
+        
+    
         

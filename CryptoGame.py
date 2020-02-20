@@ -1,7 +1,8 @@
 # -*- coding: utf-8 -*-
 import pygame as py
 import Core as core
-from pygame.locals import *
+
+
 
             
 py.init()
@@ -12,10 +13,15 @@ clock = py.time.Clock()
 speed = 5
 player = core.hero(250,500, H, W, window, speed)
 scroll = core.scroller(window, player, 'forest1', speed)
-drawers = [scroll, player]
+
+msg = core.message(window, 200, 400, "Greetings!")
+
+drawers = [scroll, player, msg]
 projectiles = []
 last_attack = 0
 run = True
+
+
 while run:
     clock.tick(50)
 
@@ -30,7 +36,7 @@ while run:
     for draw in drawers:
         draw.draw()
     if py.mouse.get_pressed()[0]:
-        if py.time.get_ticks() - last_attack > 1000:
+        if py.time.get_ticks() - last_attack > 700:
             throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
             projectiles.append(throwing_star)
             last_attack = py.time.get_ticks()
