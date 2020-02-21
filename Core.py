@@ -185,7 +185,17 @@ class sign(object):
         self.x -= amount
         self.text_box.center = (self.x, self.y - 35)
         self.image_box.center = (self.x, self.y)
-        
-        
+
+class house(object):
     
+    def __init__(self, window, x, y, image):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.image = py.image.load(os.path.join('sprites', image))
+    
+    def move(self, amount):
+        self.x -= amount
+    def draw(self):
+        self.window.blit(self.image, (self.x, self.y))
         

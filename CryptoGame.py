@@ -23,9 +23,13 @@ scroll = core.scroller(window, player, 'forest1', speed)
 
 msg1 = core.sign(window, 200, 400, "Caesar's Forest")
 msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard")
+wiz_house = core.house(window, 1750, 250, "WizardHouse.png")
+
 scroll.add_scrollable(msg1)
 scroll.add_scrollable(msg2)
-drawers = [scroll, msg1, msg2, player]
+scroll.add_scrollable(wiz_house)
+
+drawers = [scroll, msg1, msg2, wiz_house, player]
 projectiles = []
 last_attack = 0
 run = True
