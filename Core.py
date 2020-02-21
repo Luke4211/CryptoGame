@@ -24,7 +24,7 @@ class hero(object):
         self.r_bound = width - (width//4)
         self.l_bound = width//4
         self.true_x = 0
-        self.attack_speed = 10
+        self.attack_speed = 15
         self.is_jump = False
         self.y_speed = 0
         self.y_jump_start = self.y
@@ -66,7 +66,7 @@ class hero(object):
     def jump(self):
         if self.is_jump == False:
             self.is_jump = True
-            self.y_speed = self.speed * 2 
+            self.y_speed = self.speed * 4 
             self.y -= self.y_speed
         else:
             if self.y_jump_start <= self.y:

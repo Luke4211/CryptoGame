@@ -15,8 +15,8 @@ py.init()
 H, W = 750, 1050
 window = py.display.set_mode((W,H))
 clock = py.time.Clock()
-speed = 5
-player = core.hero(250,500, H, W, window, speed, 4000)
+speed = 3
+player = core.hero(250,500, H, W, window, speed, 3900)
 
 # Level ~ Haunted Wood Forest
 scroll = core.scroller(window, player, 'forest1', speed)
@@ -32,7 +32,7 @@ run = True
 
 
 while run:
-    clock.tick(40)
+    clock.tick(60)
 
     
     keys = py.key.get_pressed()
