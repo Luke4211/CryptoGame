@@ -11,7 +11,8 @@ class hero(object):
     move_right = [py.image.load(os.path.join('sprites', 'hero_right_' + str(i) + '.png')) for i in sequence]
     move_left = [py.image.load(os.path.join('sprites', 'hero_left_' + str(i) + '.png')) for i in sequence]
     
-    def __init__(self, x, y, height, width, window, speed, bg_width):
+    # TODO: Give player a stats attribute, and create a new player for each scene
+    def __init__(self, x, y, height, width, window, speed, bg_width, scrolling):
         self.x = x
         self.y = y
         self.height = height
@@ -21,8 +22,13 @@ class hero(object):
         self.bg_width = bg_width
         self.move_count = 0
         self.last_dir = 1 # -1 to face left, 1 to face right
-        self.r_bound = width - (width//4)
-        self.l_bound = width//4
+        
+        if scrolling:
+            self.r_bound = width - (width//4)
+            self.l_bound = width//4
+        else:
+            self.r_bound = width - 40
+            self.l_bound = 20
         self.true_x = 0
         self.attack_speed = 15
         self.is_jump = False
@@ -85,7 +91,7 @@ class hero(object):
         else:
             return False
     def can_scroll_right(self):
-        if self.true_x + self.r_bound < self.bg_width:
+        if self.true_x < self.bg_width:
             return True
         else:
             return False
@@ -186,13 +192,16 @@ class sign(object):
         self.text_box.center = (self.x, self.y - 35)
         self.image_box.center = (self.x, self.y)
 
-class house(object):
+class scenary(object):
     
-    def __init__(self, window, x, y, image):
+    def __init__(self, window, x, y, folder, image, conv=False):
         self.window = window
         self.x = x
         self.y = y
-        self.image = py.image.load(os.path.join('sprites', image))
+        if not conv:
+            self.image = py.image.load(os.path.join(folder, image))
+        else:
+            self.image = py.image.load(os.path.join(folder, image)).convert()
     
     def move(self, amount):
         self.x -= amount
