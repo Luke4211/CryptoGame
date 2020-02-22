@@ -76,9 +76,10 @@ def scene_one(window, clock, speed):
 def scene_two(window, clock, speed):
     player = core.hero(250,700, H, W, window, speed, 1050, False)
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
+    wizard = core.wizard(window, 800, 607, 10)
     
     
-    drawers = [background, player]
+    drawers = [background, wizard, player]
     
     run = True
     
@@ -94,7 +95,8 @@ def scene_two(window, clock, speed):
         if keys[py.K_SPACE]:
             player.jump()
             
-            
+        wizard.move(0)
+        
         if player.is_jump == True:
             player.jump()
             

@@ -96,7 +96,27 @@ class hero(object):
         else:
             return False
         
-
+class wizard(object):
+    
+    sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]
+    idle = [py.image.load(os.path.join("sprites", "wizard_idle_" + str(i) + ".png")) for i in sequence]
+    
+    def __init__(self, window, x, y, speed):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.speed = speed
+        self.move_count = 0
+        self.last_dir = 0
+    
+    def move(self, direction):
+        self.x += self.last_dir * self.speed
+        self.move_count += 1
+    def draw(self):
+        if self.last_dir == 0:
+            self.window.blit(self.idle[self.move_count%42], (self.x, self.y))
+            
+        
 class scroller(object):
     
     def __init__(self, window, player, background, speed):
@@ -207,4 +227,3 @@ class scenary(object):
         self.x -= amount
     def draw(self):
         self.window.blit(self.image, (self.x, self.y))
-        
