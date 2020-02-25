@@ -5,6 +5,7 @@
 """
 import pygame as py
 import Core as core
+import os
 
 # TODO: Create a function for each level. 
 # For development, this is fine
@@ -78,6 +79,20 @@ def scene_two(window, clock, speed):
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
     wizard = core.wizard(window, 800, 607, 10)
     
+    wizard_dia = [core.scenary(window, 600, 300, "dialogue",
+            "wizard_dia_" + str(i) + ".png") 
+            for i in range(1,2)]
+    hero_dia = [core.scenary(window, 150, 200,
+            "dialogue", "hero_dia_" + str(i) + ".png")
+            for i in range(1,2)]
+    
+    dialogue = [None]*(len(wizard_dia) + len(hero_dia))
+    dialogue[::2] = wizard_dia
+    dialogue[1::2] = hero_dia
+    print(len(wizard_dia))
+    
+    
+    
     
     drawers = [background, wizard, player]
     
@@ -93,7 +108,9 @@ def scene_two(window, clock, speed):
         if keys[py.K_a]:
             player.move(-1)
         if keys[py.K_SPACE]:
-            player.jump()
+            player.jump()        
+        if player.true_x > 322:
+            run = False
             
         wizard.move(0)
         
@@ -108,8 +125,34 @@ def scene_two(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
-            
-            
+                
+    run = True
+    cur_dia = 0
+    while run:
+        clock.tick(60)
+        
+        keys = py.key.get_pressed()
+        
+        
+        
+        for draw in drawers:
+            draw.draw()
+        
+        dialogue[cur_dia].draw()
+        
+        wizard.move(0)
+        
+        if keys[py.K_e]:
+            cur_dia += 1
+                
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        py.display.update()
+        
+    
 py.init()
 
 H, W = 750, 1050
@@ -118,7 +161,7 @@ clock = py.time.Clock()
 speed = 3
 
 
-scene_one(window, clock, speed)
+#scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
 

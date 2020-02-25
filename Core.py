@@ -37,7 +37,7 @@ class hero(object):
 
         
     def draw(self):
-        print(str(self.true_x))
+        #print(str(self.true_x))
         if self.last_dir == 1:
             self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
         else:
