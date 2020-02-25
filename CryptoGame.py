@@ -150,6 +150,8 @@ def scene_two(window, clock, speed):
     wizard_right = [core.scenary(
             window, 600, 300, "dialogue", "wizard_right_" + str(i) + ".png")
             for i in range(1,4)]
+    hero_right = core.scenary(window, 280, 380, "dialogue", "hero_right_1.png")
+    wizard_right.append(hero_right)
     while not answer == "a spell":
         run = True
         last_enter = py.time.get_ticks()
@@ -190,7 +192,7 @@ def scene_two(window, clock, speed):
             if py.time.get_ticks() - last_enter > 1000:             
                 cur_dia += 1
                 last_enter = py.time.get_ticks()
-                if cur_dia == 4:
+                if cur_dia > 3:
                     run = False
         for event in py.event.get():
             if event.type == py.QUIT:
@@ -244,7 +246,7 @@ clock = py.time.Clock()
 speed = 3
 
 
-scene_one(window, clock, speed)
+#scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
 
