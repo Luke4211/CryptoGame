@@ -27,12 +27,9 @@ def scene_one(window, clock, speed):
     drawers = [scroll, msg1, msg2, wiz_fence, wiz_house, player]
     projectiles = []
     last_attack = 0
-    run = True
-    
-    
+    run = True        
     while run:
-        clock.tick(60)
-    
+        clock.tick(60)    
         
         keys = py.key.get_pressed()
         
@@ -87,15 +84,10 @@ def scene_two(window, clock, speed):
     
     dialogue = [None]*(len(wizard_dia) + len(hero_dia))
     dialogue[::2] = wizard_dia
-    dialogue[1::2] = hero_dia
-    
-    
-    
-    
+    dialogue[1::2] = hero_dia    
     drawers = [background, wizard, player]
-    
-    run = True
-    
+   
+    run = True   
     while run:
         clock.tick(60)
         
@@ -133,9 +125,7 @@ def scene_two(window, clock, speed):
                      
         for draw in drawers:
             draw.draw()
-        
-        
-        
+      
         wizard.move(0)
         
         if player.is_jump == True:
@@ -152,8 +142,7 @@ def scene_two(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
-        dialogue[cur_dia].draw()
-        
+        dialogue[cur_dia].draw()   
         py.display.update()
         
     answer = scene_two_challenge(window, clock, drawers, player, wizard, dialogue[cur_dia-1])

@@ -148,13 +148,7 @@ class scroller(object):
                 
                 for scrollable in self.scrollables:
                     scrollable.move(direction*self.speed)
-                """
-                if self.x1 < self.background.get_width() * -1:
-                    self.x1 = self.background.get_width()
-                    
-                if self.x2 < self.background.get_width() * -1:
-                    self.x2 = self.background.get_width()
-                """
+
                 self.player.move(0)
                 self.player.update_truex(direction)
                 
