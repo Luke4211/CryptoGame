@@ -156,18 +156,74 @@ def scene_two(window, clock, speed):
         
         py.display.update()
         
+    answer = scene_two_challenge(window, clock, drawers, player, wizard, dialogue[cur_dia-1])
+    wizard_wrong = core.scenary(window, 600, 300, "dialogue", "wizard_wrong_1.png")
+    wizard_right = [core.scenary(
+            window, 600, 300, "dialogue", "wizard_right_" + str(i) + ".png")
+            for i in range(1,4)]
+    while not answer == "a spell":
+        run = True
+        last_enter = py.time.get_ticks()
+        while run:
+            clock.tick(60)        
+            keys = py.key.get_pressed()
+                         
+            for draw in drawers:
+                draw.draw()
+                            
+            wizard.move(0)
+            
+            if keys[py.K_e]:
+                if py.time.get_ticks() - last_enter > 1000:             
+                    run = False
+            for event in py.event.get():
+                if event.type == py.QUIT:
+                    run = False
+                    py.quit()
+                    quit()
+            wizard_wrong.draw()
+            py.display.update()
+        answer = scene_two_challenge(window, clock, drawers, player, wizard, dialogue[cur_dia-1])
+    
+    run = True
+    last_enter = py.time.get_ticks()
+    cur_dia = 0
+    while run:
+        clock.tick(60)        
+        keys = py.key.get_pressed()
+                         
+        for draw in drawers:
+            draw.draw()
+                            
+        wizard.move(0)
+        wizard_right[cur_dia].draw()
+        if keys[py.K_e]:
+            if py.time.get_ticks() - last_enter > 1000:             
+                cur_dia += 1
+                last_enter = py.time.get_ticks()
+                if cur_dia == 4:
+                    run = False
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        
+        
+        py.display.update()
+    
+def scene_two_challenge(window, clock, drawers, player, wizard, question):
     run = True
     player_response = core.sign(window, 470, 550, "", "dialogue", "hero_dia_5.png", font_size=30)
     player_response.text_box.center = (430, 515)
     in_string = ""
     while run:
         clock.tick(60)
-        keys = py.key.get_pressed()
                      
         for draw in drawers:
             draw.draw()
         player_response.draw()
-        dialogue[cur_dia-1].draw()
+        question.draw()
         
         wizard.move(0)
         if player.is_jump == True:
@@ -189,7 +245,7 @@ def scene_two(window, clock, speed):
                         in_string += str(chr(event.key))
         player_response.change_text(in_string)
         py.display.update()
-        
+    return in_string
     
 py.init()
 
