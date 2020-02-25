@@ -163,7 +163,7 @@ def scene_two(window, clock, speed):
             wizard.move(0)
             
             if keys[py.K_e]:
-                if py.time.get_ticks() - last_enter > 1000:             
+                if py.time.get_ticks() - last_enter > 500:             
                     run = False
             for event in py.event.get():
                 if event.type == py.QUIT:
