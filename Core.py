@@ -8,8 +8,12 @@ import pygame as py
 
 class hero(object):
     sequence = [1,1,1,1, 2,2,2,2, 3,3,3,3]
-    move_right = [py.image.load(os.path.join('sprites', 'hero_right_' + str(i) + '.png')) for i in sequence]
-    move_left = [py.image.load(os.path.join('sprites', 'hero_left_' + str(i) + '.png')) for i in sequence]
+    move_right = [py.image.load(
+            os.path.join('sprites', 'hero_right_' + str(i) + '.png')) 
+    for i in sequence]
+    move_left = [py.image.load(
+            os.path.join('sprites', 'hero_left_' + str(i) + '.png')) 
+    for i in sequence]
     
     # TODO: Give player a stats attribute, and create a new player for each scene
     def __init__(self, x, y, height, width, window, speed, bg_width, scrolling):
@@ -186,16 +190,16 @@ class star(object):
 
 class sign(object):
     
-    def __init__(self, window, x, y, message):
+    def __init__(self, window, x, y, message, folder, image, font_size=20):
         self.window = window
         self.x = x
         self.y = y
         self.message = message
         self.active = True
-        self.sign = py.image.load(os.path.join('sprites', 'sign.png'))
-        font = py.font.Font(os.path.join('font', 'AncientModernTales.ttf'), 20)
+        self.sign = py.image.load(os.path.join(folder, image))
+        self.font = py.font.Font(os.path.join('font', 'AncientModernTales.ttf'), font_size)
         
-        self.text = font.render(self.message, True, (0,0,0) )
+        self.text = self.font.render(self.message, True, (0,0,0) )
         
         self.text_box = self.text.get_rect()
         
@@ -211,6 +215,9 @@ class sign(object):
         self.x -= amount
         self.text_box.center = (self.x, self.y - 35)
         self.image_box.center = (self.x, self.y)
+        
+    def change_text(self, text):
+        self.text = self.font.render(text, True, (0,0,0) )
 
 class scenary(object):
     

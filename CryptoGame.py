@@ -5,18 +5,17 @@
 """
 import pygame as py
 import Core as core
-import os
 
 # TODO: Create a function for each level. 
-# For development, this is fine
+
 
 # Level ~ Haunted Wood Forest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True)
     scroll = core.scroller(window, player, 'forest1', speed)
     
-    msg1 = core.sign(window, 200, 400, "Caesar's Forest")
-    msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard")
+    msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
+    msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard", "sprites", "sign.png")
     wiz_house = core.scenary(window, 1750, 293, "sprites", "WizardHouse.png")
     wiz_fence = core.scenary(window, 1800, 400, "sprites", "WizardFence.png")
     
@@ -79,17 +78,16 @@ def scene_two(window, clock, speed):
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
     wizard = core.wizard(window, 800, 607, 10)
     
-    wizard_dia = [core.scenary(window, 600, 300, "dialogue",
-            "wizard_dia_" + str(i) + ".png") 
-            for i in range(1,2)]
-    hero_dia = [core.scenary(window, 150, 200,
+    wizard_dia = [core.scenary(window, 600, 300, 
+            "dialogue","wizard_dia_" + str(i) + ".png") 
+            for i in range(1,6)]
+    hero_dia = [core.scenary(window, 280, 380,
             "dialogue", "hero_dia_" + str(i) + ".png")
-            for i in range(1,2)]
+            for i in range(1,6)]
     
     dialogue = [None]*(len(wizard_dia) + len(hero_dia))
     dialogue[::2] = wizard_dia
     dialogue[1::2] = hero_dia
-    print(len(wizard_dia))
     
     
     
@@ -128,28 +126,68 @@ def scene_two(window, clock, speed):
                 
     run = True
     cur_dia = 0
+    last_enter = 0
     while run:
-        clock.tick(60)
-        
+        clock.tick(60)        
         keys = py.key.get_pressed()
-        
-        
-        
+                     
         for draw in drawers:
             draw.draw()
         
-        dialogue[cur_dia].draw()
+        
         
         wizard.move(0)
         
+        if player.is_jump == True:
+            player.jump()
+            
         if keys[py.K_e]:
-            cur_dia += 1
-                
+            if py.time.get_ticks() - last_enter > 1000:             
+                cur_dia += 1
+                last_enter = py.time.get_ticks()
+                if cur_dia == 9:
+                    run = False
         for event in py.event.get():
             if event.type == py.QUIT:
                 run = False
                 py.quit()
                 quit()
+        dialogue[cur_dia].draw()
+        
+        py.display.update()
+        
+    run = True
+    player_response = core.sign(window, 470, 550, "", "dialogue", "hero_dia_5.png", font_size=30)
+    player_response.text_box.center = (430, 515)
+    in_string = ""
+    while run:
+        clock.tick(60)
+        keys = py.key.get_pressed()
+                     
+        for draw in drawers:
+            draw.draw()
+        player_response.draw()
+        dialogue[cur_dia-1].draw()
+        
+        wizard.move(0)
+        if player.is_jump == True:
+            player.jump()  
+           
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+            if event.type == py.KEYDOWN:   
+                if event.key == py.K_RETURN:
+                    run = False
+                elif event.key == py.K_BACKSPACE:
+                    if len(in_string) > 0:
+                        in_string = in_string[0:-1]
+                else:
+                    if len(in_string) < 7:
+                        in_string += str(chr(event.key))
+        player_response.change_text(in_string)
         py.display.update()
         
     
