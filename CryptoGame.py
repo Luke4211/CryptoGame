@@ -255,7 +255,7 @@ clock = py.time.Clock()
 speed = 3
 
 
-#scene_one(window, clock, speed)
+scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
 
