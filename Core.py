@@ -104,7 +104,7 @@ class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]
     idle = [py.image.load(os.path.join("sprites", "wizard_idle_" + str(i) + ".png")) for i in sequence]
-    
+    idle_right = [py.image.load(os.path.join("sprites", "wizard_idle_right_" + str(i) + ".png")) for i in sequence]
     def __init__(self, window, x, y, speed):
         self.window = window
         self.x = x
@@ -112,15 +112,21 @@ class wizard(object):
         self.speed = speed
         self.move_count = 0
         self.last_dir = 0
-    
+        self.facing = 1
+        
     def move(self, direction):
         self.x += self.last_dir * self.speed
         self.move_count += 1
+        self.last_dir = direction
     def draw(self):
         if self.last_dir == 0:
-            self.window.blit(self.idle[self.move_count%42], (self.x, self.y))
+            if self.facing == 1:
+                self.window.blit(self.idle_right[self.move_count%42], (self.x, self.y))
+            else:
+                self.window.blit(self.idle[self.move_count%42], (self.x, self.y))
             
-        
+    def turn_around(self):
+        self.facing *= -1
 class scroller(object):
     
     def __init__(self, window, player, background, speed):

@@ -115,7 +115,8 @@ def scene_two(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
-                
+    
+    wizard.turn_around()
     run = True
     cur_dia = 0
     last_enter = 0
@@ -246,7 +247,7 @@ clock = py.time.Clock()
 speed = 3
 
 
-scene_one(window, clock, speed)
+#scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
 
