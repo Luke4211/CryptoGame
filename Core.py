@@ -99,8 +99,12 @@ class hero(object):
             return True
         else:
             return False
-        
-class wizard(object):
+
+class enemy(object):
+    
+
+
+#class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]
     idle = [py.image.load(os.path.join("sprites", "wizard_idle_" + str(i) + ".png")) for i in sequence]

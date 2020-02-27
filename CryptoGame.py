@@ -9,7 +9,7 @@ import Core as core
 # TODO: Create a function for each level. 
 
 
-# Level ~ Haunted Wood Forest
+# Level One ~ Haunted Wood Forest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True)
     scroll = core.scroller(window, player, 'forest1', speed)
@@ -27,6 +27,7 @@ def scene_one(window, clock, speed):
     drawers = [scroll, msg1, msg2, wiz_fence, wiz_house, player]
     projectiles = []
     last_attack = 0
+    last_jump = 0
     run = True        
     while run:
         clock.tick(60)    
@@ -38,7 +39,9 @@ def scene_one(window, clock, speed):
         if keys[py.K_a]:
             scroll.move(-1)
         if keys[py.K_SPACE]:
-            player.jump()
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()
         if keys[py.K_e]:
             if player.true_x >= 1900 and player.true_x <= 1920:
                 run = False
@@ -69,7 +72,7 @@ def scene_one(window, clock, speed):
                 py.quit()
                 quit()
                 
-
+# Level Two ~ Wizard's House
 def scene_two(window, clock, speed):
     player = core.hero(250,700, H, W, window, speed, 1050, False)
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
