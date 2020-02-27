@@ -12,8 +12,8 @@ import Core as core
 # Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4)
-    robber = core.robber(player, .2, .05, 5, 500, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4)
-    scroll = core.scroller(window, player, 'forest1', speed)
+    robber = core.robber(player, .2, .03, 5, 500, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4)
+    scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
     msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
     msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard", "sprites", "sign.png")

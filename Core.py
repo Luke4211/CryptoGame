@@ -38,8 +38,8 @@ class humanoid(object):
         self.last_dir = 1 # -1 to face left, 1 to face right
         
         if scrolling:
-            self.r_bound = width - (width//4)
-            self.l_bound = width//4
+            self.r_bound = width - (width//5)
+            self.l_bound = width//5
         else:
             self.r_bound = width - 40
             self.l_bound = 20
@@ -58,7 +58,6 @@ class humanoid(object):
             self.window.blit(self.move_left[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         
     def move(self, direction):
-        
         rtn = True
         if direction == 1:
             if (self.x + self.speed) < self.r_bound:
@@ -81,6 +80,7 @@ class humanoid(object):
         elif direction == -2:
             self.move_count += 1
                 
+            
         return rtn   
     
     def jump(self):
@@ -126,7 +126,7 @@ class robber(humanoid):
         self.att_rate = att_rate
         self.att_speed = att_speed
         self.hero = hero
-        
+        self.norm_speed = self.speed 
         self.last_attack = py.time.get_ticks()
         
         random.seed()
@@ -135,6 +135,8 @@ class robber(humanoid):
     def move(self):
         diff = self.hero.x - self.x
         
+
+            
         if abs(diff) < 40:
             direction = 0
         elif diff > 0:
@@ -188,7 +190,7 @@ class wizard(object):
         self.facing *= -1
 class scroller(object):
     
-    def __init__(self, window, player, background, speed):
+    def __init__(self, window, player, background, speed, enemies):
         self.window = window
         self.player = player
         self.background = py.image.load(os.path.join('backgrounds', background + '.png')).convert()
@@ -197,7 +199,7 @@ class scroller(object):
         self.speed = speed
         self.draw()
         self.scrollables = []
-        
+        self.enemies = enemies
     
     def draw(self):
         self.window.blit(self.background, (self.x1,  0))
@@ -215,6 +217,8 @@ class scroller(object):
                     scrollable.move(direction*self.speed)
 
                 self.player.move(-2)
+                for enemy in self.enemies:
+                    super(type(enemy), enemy).move(-2)
                 self.player.update_truex(direction)
                 
     def add_scrollable(self, scrollable):
