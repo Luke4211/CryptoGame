@@ -9,9 +9,10 @@ import Core as core
 # TODO: Create a function for each level. 
 
 
-# Level One ~ Haunted Wood Forest
+# Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
-    player = core.hero(250,500, H, W, window, speed, 1915, True)
+    player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4)
+    robber = core.robber(player, .2, .05, 5, 500, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4)
     scroll = core.scroller(window, player, 'forest1', speed)
     
     msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
@@ -24,7 +25,7 @@ def scene_one(window, clock, speed):
     for scr in scrolls:
         scroll.add_scrollable(scr)
         
-    drawers = [scroll, msg1, msg2, wiz_fence, wiz_house, player]
+    drawers = [scroll, msg1, msg2, wiz_fence, wiz_house, robber, player]
     projectiles = []
     last_attack = 0
     last_jump = 0
@@ -45,7 +46,7 @@ def scene_one(window, clock, speed):
         if keys[py.K_e]:
             if player.true_x >= 1900 and player.true_x <= 1920:
                 run = False
-        
+        robber.move()
         if player.is_jump == True:
             player.jump()
         for draw in drawers:
@@ -55,7 +56,9 @@ def scene_one(window, clock, speed):
                 throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
-        
+        robb_att = robber.attack()
+        if robb_att != -1:
+            projectiles.append(robb_att)
         deletes = []
         for proj in projectiles:
             if not proj.dead:
@@ -74,7 +77,7 @@ def scene_one(window, clock, speed):
                 
 # Level Two ~ Wizard's House
 def scene_two(window, clock, speed):
-    player = core.hero(250,700, H, W, window, speed, 1050, False)
+    player = core.hero(250,700, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4)
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
     wizard = core.wizard(window, 800, 607, 10)
     

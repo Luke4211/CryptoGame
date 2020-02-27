@@ -5,18 +5,12 @@
 """
 import os
 import pygame as py
+import random
 
-class hero(object):
-    sequence = [1,1,1,1, 2,2,2,2, 3,3,3,3]
-    move_right = [py.image.load(
-            os.path.join('sprites', 'hero_right_' + str(i) + '.png')) 
-    for i in sequence]
-    move_left = [py.image.load(
-            os.path.join('sprites', 'hero_left_' + str(i) + '.png')) 
-    for i in sequence]
-    
-    # TODO: Give player a stats attribute, and create a new player for each scene
-    def __init__(self, x, y, height, width, window, speed, bg_width, scrolling):
+class humanoid(object):
+    def __init__(self, x, y, height, width, window, speed, 
+                 bg_width, scrolling, hp, strength, image,
+                 num_frames, seq_len):
         self.x = x
         self.y = y
         self.height = height
@@ -24,6 +18,22 @@ class hero(object):
         self.window = window
         self.speed = int(1.5*speed)
         self.bg_width = bg_width
+        self.hp = hp
+        self.strength = strength
+        self.num_frames = num_frames
+        self.seq_len = seq_len
+        
+        
+        
+        sequence = []
+        
+        for i in range(1, num_frames + 1):
+            for j in range(0, seq_len):
+                sequence.append(i)
+        
+        self.move_right = [py.image.load(os.path.join('sprites', image + '_right_' + str(i) + '.png')) for i in sequence]
+        self.move_left = [py.image.load(os.path.join('sprites', image +  '_left_' + str(i) + '.png')) for i in sequence]
+        
         self.move_count = 0
         self.last_dir = 1 # -1 to face left, 1 to face right
         
@@ -38,14 +48,14 @@ class hero(object):
         self.is_jump = False
         self.y_speed = 0
         self.y_jump_start = self.y
-
+        
         
     def draw(self):
         #print(str(self.true_x))
         if self.last_dir == 1:
-            self.window.blit(self.move_right[self.move_count%12], (self.x, self.y))
+            self.window.blit(self.move_right[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         else:
-            self.window.blit(self.move_left[self.move_count%12], (self.x, self.y))
+            self.window.blit(self.move_left[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         
     def move(self, direction):
         
@@ -68,7 +78,7 @@ class hero(object):
             else: 
                 rtn = False
             
-        else:
+        elif direction == -2:
             self.move_count += 1
                 
         return rtn   
@@ -99,12 +109,57 @@ class hero(object):
             return True
         else:
             return False
-
-class enemy(object):
     
+class hero(humanoid):
+    def __init___(self, **kwargs):
+        
+        super(hero, self).__init__(**kwargs)
+        
+         
 
+#TODO: Fix the scrolling speed issue here. Subtract from player speed
+        #Robber speed and move that much
+class robber(humanoid):
+    def __init__(self, hero, jumprate, att_rate, att_speed, *args, **kwargs):
+        super(robber, self).__init__(*args, **kwargs)
+        self.jumprate = jumprate
+        self.att_rate = att_rate
+        self.att_speed = att_speed
+        self.hero = hero
+        
+        self.last_attack = py.time.get_ticks()
+        
+        random.seed()
+        
+        
+    def move(self):
+        diff = self.hero.x - self.x
+        
+        if abs(diff) < 40:
+            direction = 0
+        elif diff > 0:
+            direction = 1
+        else:
+            direction = -1
 
-#class wizard(object):
+        super(robber, self).move(direction)
+    def attack(self):
+        diff = self.hero.x - self.x
+        
+        if diff > 0:
+            direction = 1
+        else:
+            direction = -1
+        
+        att = random.random()
+        
+        proj = -1
+        if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
+            proj = star(self.window, self.x, self.y, self.att_speed, direction)
+            self.last_attack = py.time.get_ticks()
+        return proj
+
+class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]
     idle = [py.image.load(os.path.join("sprites", "wizard_idle_" + str(i) + ".png")) for i in sequence]
@@ -159,7 +214,7 @@ class scroller(object):
                 for scrollable in self.scrollables:
                     scrollable.move(direction*self.speed)
 
-                self.player.move(0)
+                self.player.move(-2)
                 self.player.update_truex(direction)
                 
     def add_scrollable(self, scrollable):
