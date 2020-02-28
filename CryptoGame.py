@@ -78,7 +78,7 @@ def scene_one(window, clock, speed):
                 
 # Level Two ~ Wizard's House
 def scene_two(window, clock, speed):
-    player = core.hero(250,700, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4)
+    player = core.hero(250,700, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, -600, 0, "backgrounds", "WizardHouse.png", conv=True)
     wizard = core.wizard(window, 800, 607, 10)
     
