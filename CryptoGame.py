@@ -11,8 +11,8 @@ import Core as core
 
 # Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
-    player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4)
-    robber = core.robber(player, .2, .03, 5, 1000, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4)
+    player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
+    robber = core.robber(player, .07, .03, 5, 1000, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
     msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
@@ -47,6 +47,7 @@ def scene_one(window, clock, speed):
             if player.true_x >= 1900 and player.true_x <= 1920:
                 run = False
         robber.move()
+        #robber.jump()
         if player.is_jump == True:
             player.jump()
         for draw in drawers:

@@ -10,7 +10,7 @@ import random
 class humanoid(object):
     def __init__(self, x, y, height, width, window, speed, 
                  bg_width, scrolling, hp, strength, image,
-                 num_frames, seq_len):
+                 num_frames, seq_len, jump_mult):
         self.x = x
         self.y = y
         self.height = height
@@ -22,7 +22,7 @@ class humanoid(object):
         self.strength = strength
         self.num_frames = num_frames
         self.seq_len = seq_len
-        
+        self.jump_mult = jump_mult
         
         
         sequence = []
@@ -86,7 +86,7 @@ class humanoid(object):
     def jump(self):
         if self.is_jump == False:
             self.is_jump = True
-            self.y_speed = self.speed * 4 
+            self.y_speed = self.speed * self.jump_mult
             self.y -= self.y_speed
         else:
             if self.y_jump_start <= self.y:
@@ -128,11 +128,19 @@ class robber(humanoid):
         self.hero = hero
         self.norm_speed = self.speed 
         self.last_attack = py.time.get_ticks()
-        
+        self.last_jump = py.time.get_ticks()
         random.seed()
         
         
     def move(self):
+        
+        if self.is_jump == False:
+            j = random.random() 
+            if j <= self.jumprate and py.time.get_ticks() - self.last_jump > 800:
+                self.jump()
+                self.last_jump = py.time.get_ticks()
+        else:
+            self.jump()
         diff = self.hero.x - self.x
         
 
@@ -160,6 +168,7 @@ class robber(humanoid):
             proj = star(self.window, self.x, self.y, self.att_speed, direction)
             self.last_attack = py.time.get_ticks()
         return proj
+    
 
 class wizard(object):
     
