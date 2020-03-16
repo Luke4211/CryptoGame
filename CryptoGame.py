@@ -15,6 +15,8 @@ def scene_one(window, clock, speed):
     robber = core.robber(player, .07, .03, 5, 1000, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
+    
+    
     msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
     msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard", "sprites", "sign.png")
     wiz_house = core.scenary(window, 1750, 293, "sprites", "WizardHouse.png")
@@ -57,9 +59,11 @@ def scene_one(window, clock, speed):
                 throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
+                
         robb_att = robber.attack()
         if robb_att != -1:
             projectiles.append(robb_att)
+            
         deletes = []
         for proj in projectiles:
             if not proj.dead:
@@ -69,6 +73,15 @@ def scene_one(window, clock, speed):
                 deletes.append(proj)
         for rm in deletes:
             projectiles.remove(rm)
+            
+        
+        for i in range(len(projectiles)):
+            if projectiles[i].rect.colliderect(player.rect):
+                if not projectiles[i].player:
+                    projectiles[i].dead = True
+                    player.hp -= 10
+        
+        print(str(player.hp))
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:

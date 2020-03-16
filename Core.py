@@ -10,7 +10,7 @@ import random
 class humanoid(object):
     def __init__(self, x, y, height, width, window, speed, 
                  bg_width, scrolling, hp, strength, image,
-                 num_frames, seq_len, jump_mult):
+                 num_frames, seq_len, jump_mult, friendly=True):
         self.x = x
         self.y = y
         self.height = height
@@ -23,6 +23,7 @@ class humanoid(object):
         self.num_frames = num_frames
         self.seq_len = seq_len
         self.jump_mult = jump_mult
+        self.rect = py.rect.Rect((x,y), (45,45))
         
         
         sequence = []
@@ -80,7 +81,8 @@ class humanoid(object):
         elif direction == -2:
             self.move_count += 1
                 
-            
+        self.rect.x = self.x
+        
         return rtn   
     
     def jump(self):
@@ -96,6 +98,7 @@ class humanoid(object):
             else:
                 self.y -= self.y_speed
                 self.y_speed -= 1
+        self.rect.y = self.y
 
     def update_truex(self, direction):
         self.true_x += direction*self.speed
@@ -122,6 +125,7 @@ class hero(humanoid):
 class robber(humanoid):
     def __init__(self, hero, jumprate, att_rate, att_speed, *args, **kwargs):
         super(robber, self).__init__(*args, **kwargs)
+        self.friendly = False
         self.jumprate = jumprate
         self.att_rate = att_rate
         self.att_speed = att_speed
@@ -165,7 +169,7 @@ class robber(humanoid):
         
         proj = -1
         if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
-            proj = star(self.window, self.x, self.y, self.att_speed, direction)
+            proj = star(self.window, self.x, self.y, self.att_speed, direction, player=False)
             self.last_attack = py.time.get_ticks()
         return proj
     
@@ -236,7 +240,7 @@ class scroller(object):
 
 class star(object):
     
-    def __init__(self, window, x, y, speed, direction):
+    def __init__(self, window, x, y, speed, direction, player=True):
         self.window = window
         self.x = x
         self.y = y
@@ -247,7 +251,7 @@ class star(object):
         self.rect = py.Rect((x,y), (30, 30))
         self.dead = False
         self.window_width, _ = py.display.get_surface().get_size()
-        
+        self.player = player
     def draw(self):
         if not self.dead:
             self.window.blit(self.animation[self.move_count%5], (self.x, self.y))
