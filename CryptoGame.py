@@ -31,6 +31,8 @@ def scene_one(window, clock, speed):
     projectiles = []
     last_attack = 0
     last_jump = 0
+    
+    success = True
     run = True        
     while run:
         clock.tick(60)    
@@ -79,15 +81,21 @@ def scene_one(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 10
+                    player.hp -= 30
         
         print(str(player.hp))
+        
+        if player.hp <= 0:
+            run = False
+            success = False
+            
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:
                 run = False
                 py.quit()
                 quit()
+    return success
                 
 # Level Two ~ Wizard's House
 def scene_two(window, clock, speed):
@@ -267,7 +275,10 @@ clock = py.time.Clock()
 speed = 3
 
 
-scene_one(window, clock, speed)
+success = scene_one(window, clock, speed)
+
+while(success == False):
+    success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
 
