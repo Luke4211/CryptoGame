@@ -133,45 +133,53 @@ class robber(humanoid):
         self.norm_speed = self.speed 
         self.last_attack = py.time.get_ticks()
         self.last_jump = py.time.get_ticks()
+        self.dead = False
         random.seed()
         
         
     def move(self):
-        
-        if self.is_jump == False:
-            j = random.random() 
-            if j <= self.jumprate and py.time.get_ticks() - self.last_jump > 800:
+        if not self.dead:
+            if self.is_jump == False:
+                j = random.random() 
+                if j <= self.jumprate and py.time.get_ticks() - self.last_jump > 800:
+                    self.jump()
+                    self.last_jump = py.time.get_ticks()
+            else:
                 self.jump()
-                self.last_jump = py.time.get_ticks()
-        else:
-            self.jump()
-        diff = self.hero.x - self.x
-        
-
+            diff = self.hero.x - self.x
             
-        if abs(diff) < 40:
-            direction = 0
-        elif diff > 0:
-            direction = 1
-        else:
-            direction = -1
+    
+                
+            if abs(diff) < 40:
+                direction = 0
+            elif diff > 0:
+                direction = 1
+            else:
+                direction = -1
 
-        super(robber, self).move(direction)
+            super(robber, self).move(direction)
     def attack(self):
-        diff = self.hero.x - self.x
-        
-        if diff > 0:
-            direction = 1
-        else:
-            direction = -1
-        
-        att = random.random()
-        
         proj = -1
-        if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
-            proj = star(self.window, self.x, self.y, self.att_speed, direction, player=False)
-            self.last_attack = py.time.get_ticks()
+        
+        if not self.dead:
+            diff = self.hero.x - self.x
+            
+            if diff > 0:
+                direction = 1
+            else:
+                direction = -1
+            
+            att = random.random()
+            
+            
+            if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
+                proj = star(self.window, self.x, self.y, self.att_speed, direction, player=False)
+                self.last_attack = py.time.get_ticks()
         return proj
+    
+    def draw(self):
+        if not self.dead:
+            super(robber, self).draw()
     
 
 class wizard(object):

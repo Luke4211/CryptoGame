@@ -49,11 +49,11 @@ def scene_one(window, clock, speed):
                 player.jump()
                 last_jump = py.time.get_ticks()
         if keys[py.K_e]:
-            if player.true_x >= 1900 and player.true_x <= 1920:
+            if player.true_x >= 1900 and player.true_x <= 1920 and robber.dead:
                 run = False
+        
         robber.move()
         
-        #robber.jump()
         
         if player.is_jump == True:
             player.jump()
@@ -84,15 +84,19 @@ def scene_one(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 110
-                    #TODO: Change this back to 40
+                    player.hp -= 40
+            if projectiles[i].rect.colliderect(robber.rect):
+                if projectiles[i].player:
+                    projectiles[i].dead = True
+                    robber.hp -= 40
         
         print(str(player.hp))
         
         if player.hp <= 0:
             run = False
             success = False
-            
+        if robber.hp <= 0:
+            robber.dead = True
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:
