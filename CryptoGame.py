@@ -5,6 +5,7 @@
 """
 import pygame as py
 import Core as core
+import os
 
 # TODO: Create a function for each level. 
 
@@ -51,7 +52,9 @@ def scene_one(window, clock, speed):
             if player.true_x >= 1900 and player.true_x <= 1920:
                 run = False
         robber.move()
+        
         #robber.jump()
+        
         if player.is_jump == True:
             player.jump()
         for draw in drawers:
@@ -81,7 +84,8 @@ def scene_one(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 30
+                    player.hp -= 110
+                    #TODO: Change this back to 40
         
         print(str(player.hp))
         
@@ -267,6 +271,38 @@ def scene_two_challenge(window, clock, drawers, player, wizard, question):
         py.display.update()
     return in_string
     
+
+def player_died(window, clock):
+    
+    death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen.jpg' )).convert()
+    run = True
+    
+    bg = py.Surface(window.get_size())
+    
+    bg = bg.convert()
+    
+    while run:
+        clock.tick(60)
+        bg.fill((0,0,0))
+        window.blit(bg, (0,0))
+        window.blit(death_screen, (-70,0))
+        
+        keys = py.key.get_pressed()
+        
+        if keys[py.K_e]:
+            run = False
+            print("Yo!")
+        
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+            
+        py.display.update()
+        
+        
+        
 py.init()
 
 H, W = 750, 1050
@@ -278,6 +314,7 @@ speed = 3
 success = scene_one(window, clock, speed)
 
 while(success == False):
+    player_died(window, clock)
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
