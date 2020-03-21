@@ -10,10 +10,24 @@ import os
 # TODO: Create a function for each level. 
 
 
+def draw_health(window, humanoid):
+        
+    width = humanoid.hp
+    x = humanoid.x - 30
+    y = humanoid.y - 50
+    red_rect = py.Rect(x, y, width, 4)
+    blk_rect = py.Rect(x - 5, y - 3 , 110, 10)
+    
+    if not humanoid.dead:
+        py.draw.rect(window, (0,0,0), blk_rect)
+    
+        if width > 0:
+            py.draw.rect(window, (255,0,0), red_rect)
+
 # Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
-    robber = core.robber(player, .06, .05, 7, 900, 500, H, W, window, 1, 1915, True, 160, 5, "robber", 3, 4, 15)
+    robber = core.robber(player, .06, .05, 7, 900, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
     
@@ -88,7 +102,7 @@ def scene_one(window, clock, speed):
             if projectiles[i].rect.colliderect(robber.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    robber.hp -= 40
+                    robber.hp -= 25
         
         
         if player.hp <= 0:
@@ -96,12 +110,18 @@ def scene_one(window, clock, speed):
             success = False
         if robber.hp <= 0:
             robber.dead = True
+        
+        draw_health(window, player)
+        draw_health(window, robber)
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:
                 run = False
                 py.quit()
                 quit()
+                
+        
+        
     return success
                 
 # Level Two ~ Wizard's House
@@ -375,7 +395,10 @@ def scene_three(window, clock, speed):
         if player.hp <= 0:
             run = False
             success = False
+        draw_health(window, player)
         
+        for robber in robbers:
+            draw_health(window, robber)
         py.display.update()
         
         for event in py.event.get():
@@ -420,9 +443,9 @@ def scene_four(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
-def player_died(window, clock):
+def player_died(window, clock, level=1):
     
-    death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen.jpg' )).convert()
+    death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
     run = True
     
     bg = py.Surface(window.get_size())
@@ -457,7 +480,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 
-
+'''
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -465,10 +488,10 @@ while(success == False):
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
-
+'''
 success = scene_three(window, clock, speed)
 while success == False:
-    player_died(window, clock)
+    player_died(window, clock, level=2)
     success = scene_three(window, clock, speed)
 
 scene_four(window, clock, speed)

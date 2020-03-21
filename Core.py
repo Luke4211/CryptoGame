@@ -23,6 +23,7 @@ class humanoid(object):
         self.num_frames = num_frames
         self.seq_len = seq_len
         self.jump_mult = jump_mult
+        self.dead = False
         self.rect = py.rect.Rect((x,y), (45,45))
         
         
@@ -133,7 +134,6 @@ class robber(humanoid):
         self.norm_speed = self.speed 
         self.last_attack = py.time.get_ticks()
         self.last_jump = py.time.get_ticks()
-        self.dead = False
         random.seed()
         
         
