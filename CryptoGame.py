@@ -90,7 +90,6 @@ def scene_one(window, clock, speed):
                     projectiles[i].dead = True
                     robber.hp -= 40
         
-        print(str(player.hp))
         
         if player.hp <= 0:
             run = False
@@ -275,7 +274,96 @@ def scene_two_challenge(window, clock, drawers, player, wizard, question):
         py.display.update()
     return in_string
     
-
+def scene_three(window, clock, speed):
+    player = core.hero(250,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
+    robber1 = core.robber(player, .07, .03, 5, 1000, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber2 = core.robber(player, .07, .03, 5, 1200, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber3 = core.robber(player, .07, .03, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    
+    robbers = [robber1, robber2, robber3]
+    scroll = core.scroller(window, player, 'desert', speed, robbers)
+    
+    #TODO: Add scrollable stuff like signs, houses, etc
+    # Add them to drawers as well
+    drawers = [scroll, player]
+    drawers += robbers
+    
+    projectiles = []
+    
+    last_attack = 0
+    last_jump = 0
+    
+    success = True
+    
+    run = True
+    
+    while run:
+        clock.tick(60)
+        keys = py.key.get_pressed()
+        if keys[py.K_d]:
+            scroll.move(1)
+        if keys[py.K_a]:
+            scroll.move(-1)
+        if keys[py.K_SPACE]:
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()
+        
+        for robber in robbers:
+            robb_att = robber.attack()
+            if robb_att != -1:
+                projectiles.append(robb_att)
+            
+            if robber.hp <= 0:
+                robber.dead = True
+            robber.move()
+        
+        if player.is_jump == True:
+            player.jump()
+        for draw in drawers:
+            draw.draw()
+        if py.mouse.get_pressed()[0]:
+            if py.time.get_ticks() - last_attack > 700:
+                throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
+                projectiles.append(throwing_star)
+                last_attack = py.time.get_ticks()
+                
+        deletes = []
+        for proj in projectiles:
+            if not proj.dead:
+                proj.move()
+                proj.draw()
+            else:
+                deletes.append(proj)
+        for rm in deletes:
+            projectiles.remove(rm)
+            
+        for i in range(len(projectiles)):
+            if projectiles[i].rect.colliderect(player.rect):
+                if not projectiles[i].player:
+                    projectiles[i].dead = True
+                    player.hp -= 40
+            for robber in robbers:
+                if projectiles[i].rect.colliderect(robber.rect):
+                    if projectiles[i].player:
+                        projectiles[i].dead = True
+                        robber.hp -= 40
+        if player.hp <= 0:
+            run = False
+            success = False
+        
+        py.display.update()
+        
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+    return success
+        
+    
+    
+    
 def player_died(window, clock):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen.jpg' )).convert()
@@ -295,7 +383,6 @@ def player_died(window, clock):
         
         if keys[py.K_e]:
             run = False
-            print("Yo!")
         
         for event in py.event.get():
             if event.type == py.QUIT:
@@ -323,3 +410,7 @@ while(success == False):
 scene_two(window, clock, speed)
 
 
+success = scene_three(window, clock, speed)
+while success == False:
+    player_died(window, clock)
+    success = scene_three(window, clock, speed)
