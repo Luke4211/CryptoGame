@@ -480,7 +480,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 
-'''
+
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -488,7 +488,7 @@ while(success == False):
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
-'''
+
 success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock, level=2)
