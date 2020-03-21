@@ -183,7 +183,23 @@ class robber(humanoid):
         if not self.dead:
             super(robber, self).draw()
     
-
+class eve(robber):
+    
+    def __init___(self, **kwargs):
+        super(hero, self).__init__(**kwargs)
+        self.aggro = False
+        
+    def attack(self):
+        if self.aggro:
+            super(eve, self).attack()
+            #TODO: Make sure above line works, and then add conditional code here
+            # To trigger falling spells
+    
+    def move(self):
+        if self.aggro:
+            super(eve, self).move()
+    
+        
 class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]

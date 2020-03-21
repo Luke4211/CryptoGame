@@ -13,7 +13,7 @@ import os
 # Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
-    robber = core.robber(player, .07, .03, 5, 1000, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber = core.robber(player, .06, .05, 7, 900, 500, H, W, window, 1, 1915, True, 160, 5, "robber", 3, 4, 15)
     scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
     
@@ -117,6 +117,7 @@ def scene_two(window, clock, speed):
             "dialogue", "hero_dia_" + str(i) + ".png")
             for i in range(1,6)]
     
+    # Splice the two lists into one, alternating
     dialogue = [None]*(len(wizard_dia) + len(hero_dia))
     dialogue[::2] = wizard_dia
     dialogue[1::2] = hero_dia    
@@ -276,10 +277,15 @@ def scene_two_challenge(window, clock, drawers, player, wizard, question):
     
 def scene_three(window, clock, speed):
     player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
+    
+    # Quick fix. If I were getting paid I'd properly fix this issue, but
+    # for school this is fine.
     player.true_x = 250
-    robber1 = core.robber(player, .07, .03, 5, 250, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    
+    
+    robber1 = core.robber(player, .07, .03, 5, 150, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber2 = core.robber(player, .07, .03, 5, 1200, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
-    robber3 = core.robber(player, .07, .03, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber3 = core.robber(player, .07, .02, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
     msg1 = core.sign(window, 350, 500, "Eve's Oasis", "sprites", "sign.png")
     
@@ -381,10 +387,39 @@ def scene_three(window, clock, speed):
         
     
 def scene_four(window, clock, speed):
-    player = core.hero(250,700, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
-    background = core.scenary(window, -600, 0, "backgrounds", "eve_house.png", conv=True)
-    wizard = core.wizard(window, 800, 607, 10)
+    player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
+    background = core.scenary(window, 0, 0, "backgrounds", "eve_house.png", conv=True)
+    eve = core.eve(player, .07, .03, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15)
     
+    drawers = [background, eve, player]
+    
+    run = True
+    
+    while run:
+        clock.tick(60)
+        
+        keys = py.key.get_pressed()
+        
+        if keys[py.K_d]:
+            player.move(1)
+        if keys[py.K_a]:
+            player.move(-1)
+        if keys[py.K_SPACE]:
+            player.jump()        
+        if player.true_x > 500:
+            run = False
+            
+        if player.is_jump == True:
+            player.jump()
+            
+        for draw in drawers:
+            draw.draw()
+        py.display.update() 
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
 def player_died(window, clock):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen.jpg' )).convert()
@@ -422,7 +457,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 
-'''
+
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -430,8 +465,10 @@ while(success == False):
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
-'''
+
 success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock)
     success = scene_three(window, clock, speed)
+
+scene_four(window, clock, speed)
