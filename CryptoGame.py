@@ -280,13 +280,23 @@ def scene_three(window, clock, speed):
     robber2 = core.robber(player, .07, .03, 5, 1200, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber3 = core.robber(player, .07, .03, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
+    msg1 = core.sign(window, 350, 500, "Eve's Oasis", "sprites", "sign.png")
+    
+    eve_house = core.scenary(window, 1730, 320, "sprites", "eve_house.png")
+    
+    scrolls = [msg1, eve_house]
+    
     robbers = [robber1, robber2, robber3]
     scroll = core.scroller(window, player, 'desert', speed, robbers)
     
-    #TODO: Add scrollable stuff like signs, houses, etc
-    # Add them to drawers as well
-    drawers = [scroll, player]
+    for scroller in scrolls:
+        scroll.add_scrollable(scroller)
+
+    drawers = [scroll]
     drawers += robbers
+    drawers += scrolls
+    drawers.append(eve_house)
+    drawers.append(player)
     
     projectiles = []
     
@@ -309,6 +319,7 @@ def scene_three(window, clock, speed):
                 player.jump()
                 last_jump = py.time.get_ticks()
         
+        dead_robbers = []
         for robber in robbers:
             robb_att = robber.attack()
             if robb_att != -1:
@@ -316,8 +327,11 @@ def scene_three(window, clock, speed):
             
             if robber.hp <= 0:
                 robber.dead = True
+                dead_robbers.append(robber)
             robber.move()
         
+        for robber in dead_robbers:
+            robbers.remove(robber)
         if player.is_jump == True:
             player.jump()
         for draw in drawers:
@@ -342,7 +356,7 @@ def scene_three(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 40
+                    player.hp -= 30
             for robber in robbers:
                 if projectiles[i].rect.colliderect(robber.rect):
                     if projectiles[i].player:
