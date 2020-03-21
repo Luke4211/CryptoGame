@@ -173,7 +173,9 @@ class robber(humanoid):
             
             
             if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
-                proj = star(self.window, self.x, self.y, self.att_speed, direction, player=False)
+                proj = enemy_projectile(self.window, self.x, self.y, self.att_speed, 
+                                        direction, player=False, image = "spear_test", 
+                                        num_frames = 1, omni_dir=False)
                 self.last_attack = py.time.get_ticks()
         return proj
     
@@ -246,23 +248,32 @@ class scroller(object):
         self.scrollables.append(scrollable)
         
 
-class star(object):
+class enemy_projectile(object):
     
-    def __init__(self, window, x, y, speed, direction, player=True):
+    def __init__(self, window, x, y, speed, direction, player=True, image="star", num_frames = 5, omni_dir = True):
         self.window = window
         self.x = x
         self.y = y
         self.speed = speed
         self.direction = direction
-        self.animation = [py.image.load(os.path.join('sprites', 'star' + str(i) + '.png')) for i in range(1,6)]
         self.move_count = 0
         self.rect = py.Rect((x,y), (30, 30))
         self.dead = False
         self.window_width, _ = py.display.get_surface().get_size()
         self.player = player
+        self.num_frames = num_frames
+        self.omni_dir = omni_dir
+        
+        if self.num_frames > 1:
+            self.animation = [py.image.load(os.path.join('sprites', image + str(i) + '.png')) for i in range(1,num_frames+1)]
+        else:
+            self.animation = [py.image.load(os.path.join('sprites', image + '.png'))]
     def draw(self):
         if not self.dead:
-            self.window.blit(self.animation[self.move_count%5], (self.x, self.y))
+            if self.direction == 1 or self.omni_dir:
+                self.window.blit(self.animation[self.move_count%self.num_frames], (self.x, self.y))
+            else:
+                self.window.blit(py.transform.flip(self.animation[self.move_count%self.num_frames], True, False), (self.x, self.y))
     def move(self):
         if not self.dead:
             self.x += self.direction*self.speed

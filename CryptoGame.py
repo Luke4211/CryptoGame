@@ -61,7 +61,7 @@ def scene_one(window, clock, speed):
             draw.draw()
         if py.mouse.get_pressed()[0]:
             if py.time.get_ticks() - last_attack > 700:
-                throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
+                throwing_star = core.enemy_projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
                 
@@ -275,8 +275,9 @@ def scene_two_challenge(window, clock, drawers, player, wizard, question):
     return in_string
     
 def scene_three(window, clock, speed):
-    player = core.hero(250,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
-    robber1 = core.robber(player, .07, .03, 5, 1000, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
+    player.true_x = 250
+    robber1 = core.robber(player, .07, .03, 5, 250, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber2 = core.robber(player, .07, .03, 5, 1200, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber3 = core.robber(player, .07, .03, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
@@ -293,9 +294,9 @@ def scene_three(window, clock, speed):
         scroll.add_scrollable(scroller)
 
     drawers = [scroll]
-    drawers += robbers
     drawers += scrolls
     drawers.append(eve_house)
+    drawers += robbers
     drawers.append(player)
     
     projectiles = []
@@ -341,7 +342,7 @@ def scene_three(window, clock, speed):
             draw.draw()
         if py.mouse.get_pressed()[0]:
             if py.time.get_ticks() - last_attack > 700:
-                throwing_star = core.star(window, player.x, player.y, player.attack_speed, player.last_dir)
+                throwing_star = core.enemy_projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
                 
@@ -379,7 +380,10 @@ def scene_three(window, clock, speed):
     return success
         
     
-    
+def scene_four(window, clock, speed):
+    player = core.hero(250,700, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
+    background = core.scenary(window, -600, 0, "backgrounds", "eve_house.png", conv=True)
+    wizard = core.wizard(window, 800, 607, 10)
     
 def player_died(window, clock):
     
@@ -418,7 +422,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 
-
+'''
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -426,7 +430,7 @@ while(success == False):
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
 
-
+'''
 success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock)
