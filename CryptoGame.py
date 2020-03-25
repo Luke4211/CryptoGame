@@ -100,7 +100,7 @@ def scene_one(window, clock, speed):
                     projectiles[i].dead = True
                     player.hp -= 40
             if projectiles[i].rect.colliderect(robber.rect):
-                if projectiles[i].player:
+                if projectiles[i].player and not robber.deadd:
                     projectiles[i].dead = True
                     robber.hp -= 25
         
@@ -420,16 +420,18 @@ def scene_four(window, clock, speed):
     
     while run:
         clock.tick(60)
-        
+        #TODO: Remove the print statement
+        print(str(player.x))
         keys = py.key.get_pressed()
         
         if keys[py.K_d]:
             player.move(1)
         if keys[py.K_a]:
-            player.move(-1)
+            if player.x > 240:
+                player.move(-1)
         if keys[py.K_SPACE]:
             player.jump()        
-        if player.true_x > 500:
+        if player.x > 550:
             run = False
             
         if player.is_jump == True:
@@ -443,6 +445,22 @@ def scene_four(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
+
+    while eve.x > 650:
+        clock.tick(60)
+        
+        eve.move_njump()
+        
+        for draw in drawers:
+            draw.draw()
+        
+        py.display.update()
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
@@ -480,7 +498,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 py.display.set_caption("Cryptogame")
-
+'''
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -493,5 +511,5 @@ success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock, level=2)
     success = scene_three(window, clock, speed)
-
+'''
 scene_four(window, clock, speed)

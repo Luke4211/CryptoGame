@@ -196,8 +196,22 @@ class eve(robber):
             # To trigger falling spells
     
     def move(self):
+        #TODO: Re-evaluate whether we need self.aggro
         if self.aggro:
             super(eve, self).move()
+    
+    # Moves without any jump animation
+    def move_njump(self):
+        diff = self.hero.x - self.x
+            
+              
+        if abs(diff) < 40:
+            direction = 0
+        elif diff > 0:
+            direction = 1
+        else:
+            direction = -1
+        super(robber, self).move(direction)
     
         
 class wizard(object):
