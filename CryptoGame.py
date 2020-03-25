@@ -562,7 +562,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 py.display.set_caption("Cryptogame")
-'''
+
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -575,5 +575,5 @@ success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock, level=2)
     success = scene_three(window, clock, speed)
-'''
+
 scene_four(window, clock, speed)
