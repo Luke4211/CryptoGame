@@ -412,8 +412,19 @@ def scene_three(window, clock, speed):
 def scene_four(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "eve_house.png", conv=True)
+    context_screen = py.image.load(os.path.join('backgrounds', 'eve_context' +  '.png' )).convert()
     eve = core.eve(player, .07, .03, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15)
     
+    eve_dia = [core.scenary(window, 400, 100, 
+            "dialogue","eve_dia_" + str(i) + ".png") 
+            for i in range(1,3)]
+    hero_dia = [core.scenary(window, 260, 130,
+            "dialogue", "hero_dia_" + str(i) + ".png")
+            for i in range(6,8)]
+    
+    dialogue = [None]*(len(eve_dia) + len(hero_dia))
+    dialogue[::2] = eve_dia
+    dialogue[1::2] = hero_dia    
     drawers = [background, eve, player]
     
     run = True
@@ -451,6 +462,10 @@ def scene_four(window, clock, speed):
         
         eve.move_njump()
         
+        if player.is_jump == True:
+            player.jump()
+            
+            
         for draw in drawers:
             draw.draw()
         
@@ -460,7 +475,56 @@ def scene_four(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
+                
+    run = True
+    cur_dia = 0
+    last_enter = 0
+    while run:
+        clock.tick(60)        
         
+        keys = py.key.get_pressed()
+                     
+        for draw in drawers:
+            draw.draw()
+      
+        dialogue[cur_dia].draw()
+        if player.is_jump == True:
+            player.jump()
+            
+        if keys[py.K_e]:
+            if py.time.get_ticks() - last_enter > 1000:             
+                cur_dia += 1
+                last_enter = py.time.get_ticks()
+                if cur_dia == 4:
+                    run = False
+
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+           
+        py.display.update()
+    
+    
+    run = True
+    cur_t = py.time.get_ticks()
+    bg = py.Surface(window.get_size()).convert()
+    bg.fill((0,0,0))
+    window.blit(bg, (0,0))
+    while run:
+        window.blit(context_screen, (0,100))
+        keys = py.key.get_pressed()
+        
+        if keys[py.K_e] and py.time.get_ticks() - cur_t > 300:
+            run = False
+            
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        py.display.update()
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
