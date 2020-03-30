@@ -75,7 +75,7 @@ def scene_one(window, clock, speed):
             draw.draw()
         if py.mouse.get_pressed()[0]:
             if py.time.get_ticks() - last_attack > 700:
-                throwing_star = core.enemy_projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
+                throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
                 
@@ -100,7 +100,7 @@ def scene_one(window, clock, speed):
                     projectiles[i].dead = True
                     player.hp -= 40
             if projectiles[i].rect.colliderect(robber.rect):
-                if projectiles[i].player and not robber.deadd:
+                if projectiles[i].player and not robber.dead:
                     projectiles[i].dead = True
                     robber.hp -= 25
         
@@ -368,7 +368,7 @@ def scene_three(window, clock, speed):
             draw.draw()
         if py.mouse.get_pressed()[0]:
             if py.time.get_ticks() - last_attack > 700:
-                throwing_star = core.enemy_projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
+                throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
                 
@@ -427,12 +427,11 @@ def scene_four(window, clock, speed):
     dialogue[1::2] = hero_dia    
     drawers = [background, eve, player]
     
+    last_jump = 0
     run = True
-    
     while run:
         clock.tick(60)
-        #TODO: Remove the print statement
-        print(str(player.x))
+        
         keys = py.key.get_pressed()
         
         if keys[py.K_d]:
@@ -441,7 +440,9 @@ def scene_four(window, clock, speed):
             if player.x > 240:
                 player.move(-1)
         if keys[py.K_SPACE]:
-            player.jump()        
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()     
         if player.x > 550:
             run = False
             
@@ -525,6 +526,89 @@ def scene_four(window, clock, speed):
                 py.quit()
                 quit()
         py.display.update()
+        
+    #TODO: Add another scene of dialogue before the boss fight
+    #TODO: Go back to scene 2 and implement last_jump
+    #TODO: Eve needs to shoot lower (or roll boulders)
+    #TODO: Need to make Eve's hitbox larger.
+    projectiles = []
+    last_attack = 0
+    last_jump = 0 
+    success = True
+    eve.aggro = True
+    run = True
+    while run:
+        clock.tick(60)
+        keys = py.key.get_pressed()
+        
+        if keys[py.K_d]:
+            if player.x < 970:    
+                player.move(1)
+        if keys[py.K_a]:
+            if player.x > 240:
+                player.move(-1)
+        if keys[py.K_SPACE]:
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()  
+        
+        if player.is_jump == True:
+            player.jump()
+        
+        if eve.hp > 0:
+            eve.move()
+            eve_att = eve.attack()
+            if eve_att != -1:
+                projectiles.append(eve_att)
+        else:
+            eve.dead = True
+            
+        if py.mouse.get_pressed()[0]:
+            if py.time.get_ticks() - last_attack > 700:
+                throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
+                projectiles.append(throwing_star)
+                last_attack = py.time.get_ticks()
+        
+        for draw in drawers:
+            draw.draw()
+        
+        
+        deletes = []
+        for proj in projectiles:
+            if not proj.dead:
+                proj.move()
+                proj.draw()
+            else:
+                deletes.append(proj)
+        for rm in deletes:
+            projectiles.remove(rm)
+            
+        for i in range(len(projectiles)):
+            if projectiles[i].rect.colliderect(player.rect):
+                if not projectiles[i].player:
+                    projectiles[i].dead = True
+                    player.hp -= 30
+            if projectiles[i].rect.colliderect(eve.rect):
+                if projectiles[i].player:
+                    projectiles[i].dead = True
+                    eve.hp -= 10
+        
+        if player.hp <= 0:
+            run = False
+            success = False
+        
+        draw_health(window, player)
+        draw_health(window, eve)
+        
+
+        py.display.update() 
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        
+    return success
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
@@ -562,7 +646,7 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 py.display.set_caption("Cryptogame")
-
+'''
 success = scene_one(window, clock, speed)
 
 while(success == False):
@@ -575,5 +659,8 @@ success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock, level=2)
     success = scene_three(window, clock, speed)
-
-scene_four(window, clock, speed)
+'''
+success = scene_four(window, clock, speed)
+while(success == False):
+    player_died(window, clock)
+    success = scene_four(window, clock, speed)

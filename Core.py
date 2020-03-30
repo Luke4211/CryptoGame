@@ -134,7 +134,7 @@ class robber(humanoid):
         self.norm_speed = self.speed 
         self.last_attack = py.time.get_ticks()
         self.last_jump = py.time.get_ticks()
-        random.seed()
+        #random.seed()
         
         
     def move(self):
@@ -173,7 +173,7 @@ class robber(humanoid):
             
             
             if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
-                proj = enemy_projectile(self.window, self.x, self.y, self.att_speed, 
+                proj = projectile(self.window, self.x, self.y, self.att_speed, 
                                         direction, player=False, image = "spear_test", 
                                         num_frames = 1, omni_dir=False)
                 self.last_attack = py.time.get_ticks()
@@ -191,14 +191,12 @@ class eve(robber):
         
     def attack(self):
         if self.aggro:
-            super(eve, self).attack()
+            return super(eve, self).attack()
             #TODO: Make sure above line works, and then add conditional code here
             # To trigger falling spells
     
     def move(self):
-        #TODO: Re-evaluate whether we need self.aggro
-        if self.aggro:
-            super(eve, self).move()
+        super(eve, self).move()
     
     # Moves without any jump animation
     def move_njump(self):
@@ -278,7 +276,7 @@ class scroller(object):
         self.scrollables.append(scrollable)
         
 
-class enemy_projectile(object):
+class projectile(object):
     
     def __init__(self, window, x, y, speed, direction, player=True, image="star", num_frames = 5, omni_dir = True):
         self.window = window
