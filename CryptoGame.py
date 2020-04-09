@@ -413,7 +413,7 @@ def scene_four(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "eve_house.png", conv=True)
     context_screen = py.image.load(os.path.join('backgrounds', 'eve_context' +  '.png' )).convert()
-    eve = core.eve(player, .07, .03, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15)
+    eve = core.eve(player, .07, .03, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15, hitbox=90)
     
     eve_dia = [core.scenary(window, 400, 100, 
             "dialogue","eve_dia_" + str(i) + ".png") 
@@ -591,7 +591,7 @@ def scene_four(window, clock, speed):
             if projectiles[i].rect.colliderect(eve.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    eve.hp -= 10
+                    eve.hp -= 17
         
         if player.hp <= 0:
             run = False
@@ -600,7 +600,7 @@ def scene_four(window, clock, speed):
         draw_health(window, player)
         draw_health(window, eve)
         
-
+       
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:
@@ -638,7 +638,7 @@ def player_died(window, clock, level=1):
         py.display.update()
         
         
-        
+   
 py.init()
 
 H, W = 750, 1050

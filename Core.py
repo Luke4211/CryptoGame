@@ -10,7 +10,7 @@ import random
 class humanoid(object):
     def __init__(self, x, y, height, width, window, speed, 
                  bg_width, scrolling, hp, strength, image,
-                 num_frames, seq_len, jump_mult, friendly=True):
+                 num_frames, seq_len, jump_mult, friendly=True, hitbox=45):
         self.x = x
         self.y = y
         self.height = height
@@ -24,7 +24,7 @@ class humanoid(object):
         self.seq_len = seq_len
         self.jump_mult = jump_mult
         self.dead = False
-        self.rect = py.rect.Rect((x,y), (45,45))
+        self.rect = py.rect.Rect((x,y), (hitbox,hitbox))
         
         
         sequence = []
@@ -186,16 +186,38 @@ class robber(humanoid):
 class eve(robber):
     
     def __init___(self, **kwargs):
-        super(hero, self).__init__(**kwargs)
+        super(eve, self).__init__(**kwargs)
         self.aggro = False
-        
+        #self.rect = py.rect.Rect((self.x,self.y), (200,200))
+        #TODO: Remove these lines
+        #super(humanoid, self).rect = py.rect.Rect((self.x,self.y), (100,100))
     def attack(self):
         if self.aggro:
-            return super(eve, self).attack()
+            #return super(eve, self).attack()
             #TODO: Make sure above line works, and then add conditional code here
             # To trigger falling spells
+            proj = -1
+        
+            if not self.dead:
+                diff = self.hero.x - self.x
+                
+                if diff > 0:
+                    direction = 1
+                else:
+                    direction = -1
+                
+                att = random.random()
+                
+                
+                if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
+                    proj = projectile(self.window, self.x, self.y+50, self.att_speed, 
+                                            direction, player=False, image = "spear_test", 
+                                            num_frames = 1, omni_dir=False)
+                    self.last_attack = py.time.get_ticks()
+            return proj
     
     def move(self):
+        
         super(eve, self).move()
     
     # Moves without any jump animation
