@@ -12,8 +12,6 @@ H, W = 750, 1050
 
 # TODO: Create a function for each level. 
 
-# TODO: Go back and balance Eve fight
-# TODO: fix typo in dialogue
 # TODO: Background music
 def draw_health(window, humanoid, king = False):
         
