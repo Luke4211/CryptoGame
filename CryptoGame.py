@@ -426,7 +426,7 @@ def scene_four(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "eve_house.png", conv=True)
     context_screen = py.image.load(os.path.join('backgrounds', 'eve_context' +  '.png' )).convert()
-    eve = core.eve(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15, hitbox=90)
+    eve = core.eve(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, False, 100, 5, "eve", 4, 4, 15, hitbox=90)
     
     eve_dia = [core.scenary(window, 400, 100, 
             "dialogue","eve_dia_" + str(i) + ".png") 
@@ -781,6 +781,13 @@ def scene_five(window, clock, speed):
                 py.quit()
                 quit()
     return success
+
+def scene_six(window, clock, speed):
+    player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
+    background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)
+    
+    king = core.king(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "king_charge", 2, 2, 15, hitbox=60)
+    
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()

@@ -238,7 +238,19 @@ class eve(robber):
             direction = -1
         super(robber, self).move(direction)
     
+class king(eve):
+    
+    def __init__(self, *args, **kwargs):
+        super(king, self).__init__(*args, **kwargs)
+        self.idle_img = py.image.load(os.path.join('sprites', 'king_idle_left'))
+        self.idle = True
         
+    def draw(self):
+        if self.idle:
+            self.window.blit(self.idle_img, (self.x, self.y))
+        else:
+            super(king, self).draw()
+    
 class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]
