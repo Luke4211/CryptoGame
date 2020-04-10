@@ -398,3 +398,20 @@ class scenary(object):
         self.x -= amount
     def draw(self):
         self.window.blit(self.image, (self.x, self.y))
+
+class arrow(object):
+    def __init__(self, window, x, y):
+        self.window = window
+        self.x = x
+        self.y = y
+        self.arrow = py.image.load(os.path.join('sprites', 'arrow.png'))
+        self.movement = [3, 3, 3, 3, 3, 3, 3, -3, -3, -3, -3, -3, -3, -3]
+        self.move_count = 0
+        
+    def draw(self):
+        self.window.blit(self.arrow, (self.x, self.y))
+    def bounce(self):
+        self.y += self.movement[self.move_count%14]
+        self.move_count += 1
+    def move(self, amount):
+        self.x -= amount

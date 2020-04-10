@@ -9,6 +9,7 @@ import os
 
 # TODO: Create a function for each level. 
 
+# TODO: Go back and balance Eve fight
 
 def draw_health(window, humanoid):
         
@@ -30,14 +31,14 @@ def scene_one(window, clock, speed):
     robber = core.robber(player, .06, .05, 7, 900, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     scroll = core.scroller(window, player, 'forest1', speed, [robber])
     
-    
+    arrow = core.arrow(window, 1760, 300)
     
     msg1 = core.sign(window, 200, 400, "Caesar's Forest", "sprites", "sign.png")
     msg2 = core.sign(window, 1500, 400, "Beware of Mad Wizard", "sprites", "sign.png")
     wiz_house = core.scenary(window, 1750, 293, "sprites", "WizardHouse.png")
     wiz_fence = core.scenary(window, 1800, 400, "sprites", "WizardFence.png")
     
-    scrolls = [msg1, msg2, wiz_house, wiz_fence]
+    scrolls = [msg1, msg2, wiz_house, wiz_fence, arrow]
     
     for scr in scrolls:
         scroll.add_scrollable(scr)
@@ -50,6 +51,7 @@ def scene_one(window, clock, speed):
     success = True
     run = True        
     while run:
+        print(str(player.true_x))
         clock.tick(60)    
         
         keys = py.key.get_pressed()
@@ -111,6 +113,9 @@ def scene_one(window, clock, speed):
         if robber.hp <= 0:
             robber.dead = True
         
+        if robber.dead:
+            arrow.bounce()
+            arrow.draw()
         draw_health(window, player)
         draw_health(window, robber)
         py.display.update() 
@@ -307,11 +312,12 @@ def scene_three(window, clock, speed):
     robber2 = core.robber(player, .07, .03, 5, 1200, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber3 = core.robber(player, .07, .02, 5, 1350, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
+    arrow = core.arrow(window, 1810, 350)
     msg1 = core.sign(window, 350, 500, "Eve's Oasis", "sprites", "sign.png")
     
     eve_house = core.scenary(window, 1730, 320, "sprites", "eve_house.png")
     
-    scrolls = [msg1, eve_house]
+    scrolls = [msg1, eve_house, arrow]
     
     robbers = [robber1, robber2, robber3]
     scroll = core.scroller(window, player, 'desert', speed, robbers)
@@ -399,6 +405,10 @@ def scene_three(window, clock, speed):
         
         for robber in robbers:
             draw_health(window, robber)
+            
+        if len(robbers) == 0:
+            arrow.bounce()
+            arrow.draw()
         py.display.update()
         
         for event in py.event.get():
@@ -507,32 +517,12 @@ def scene_four(window, clock, speed):
            
         py.display.update()
     
-    '''
-    run = True
-    cur_t = py.time.get_ticks()
-    bg = py.Surface(window.get_size()).convert()
-    bg.fill((0,0,0))
-    window.blit(bg, (0,0))
-    while run:
-        window.blit(context_screen, (0,100))
-        keys = py.key.get_pressed()
-        
-        if keys[py.K_e] and py.time.get_ticks() - cur_t > 300:
-            run = False
-            
-        for event in py.event.get():
-            if event.type == py.QUIT:
-                run = False
-                py.quit()
-                quit()
-        py.display.update()
-    '''
     
     story_screen(window, context_screen)
     #TODO: Add another scene of dialogue before the boss fight
     #TODO: Go back to scene 2 and implement last_jump
-    #TODO: Eve needs to shoot lower (or roll boulders)
-    #TODO: Need to make Eve's hitbox larger.
+    arrow = core.arrow(window, 930, 300)
+    
     projectiles = []
     last_attack = 0
     last_jump = 0 
@@ -600,6 +590,7 @@ def scene_four(window, clock, speed):
                 if projectiles[i].player:
                     projectiles[i].dead = True
                     eve.hp -= 10
+
         
         if player.hp <= 0:
             run = False
@@ -608,6 +599,9 @@ def scene_four(window, clock, speed):
         draw_health(window, player)
         draw_health(window, eve)
         
+        if eve.dead:
+            arrow.bounce()
+            arrow.draw()
        
         py.display.update() 
         for event in py.event.get():
