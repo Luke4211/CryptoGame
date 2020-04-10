@@ -185,17 +185,13 @@ class robber(humanoid):
     
 class eve(robber):
     
-    def __init___(self, **kwargs):
-        super(eve, self).__init__(**kwargs)
+    def __init__(self, *args, **kwargs):
+        super(eve, self).__init__(*args, **kwargs)
         self.aggro = False
-        #self.rect = py.rect.Rect((self.x,self.y), (200,200))
-        #TODO: Remove these lines
-        #super(humanoid, self).rect = py.rect.Rect((self.x,self.y), (100,100))
+        self.last_rockfall = py.time.get_ticks()
+        
     def attack(self):
         if self.aggro:
-            #return super(eve, self).attack()
-            #TODO: Make sure above line works, and then add conditional code here
-            # To trigger falling spells
             proj = -1
         
             if not self.dead:
@@ -206,8 +202,7 @@ class eve(robber):
                 else:
                     direction = -1
                 
-                att = random.random()
-                
+                att = random.random()             
                 
                 if att <= self.att_rate and py.time.get_ticks() - self.last_attack > 750:
                     proj = projectile(self.window, self.x, self.y+50, self.att_speed, 
@@ -216,6 +211,17 @@ class eve(robber):
                     self.last_attack = py.time.get_ticks()
             return proj
     
+    def rockfall(self):
+        proj = -1
+        
+        if not self.dead:
+            att = random.random()
+            
+            if att <= self.att_rate and py.time.get_ticks() - self.last_rockfall > 500:
+                proj = falling_rock(self.window, self.hero.x, 50, 4, 1, player=False, 
+                                    image = "boulder", num_frames = 1)
+                self.last_rockfall = py.time.get_ticks()
+        return proj
     def move(self):
         
         super(eve, self).move()
@@ -309,7 +315,7 @@ class projectile(object):
         self.move_count = 0
         self.rect = py.Rect((x,y), (30, 30))
         self.dead = False
-        self.window_width, _ = py.display.get_surface().get_size()
+        self.window_width, self.window_height = py.display.get_surface().get_size()
         self.player = player
         self.num_frames = num_frames
         self.omni_dir = omni_dir
@@ -329,6 +335,19 @@ class projectile(object):
             self.x += self.direction*self.speed
             if self.x > 0 and self.x < self.window_width + 30:
                 self.rect.move_ip(self.direction*self.speed, 0)
+                self.move_count += 1
+            else:
+                self.dead = True
+
+class falling_rock(projectile):
+    def __init__(self, *args, **kwargs):
+        super(falling_rock, self).__init__(*args, **kwargs)
+        
+    def move(self):
+        if not self.dead:
+            self.y += self.speed
+            if self.y < 550:
+                self.rect.move_ip(0, self.speed)
                 self.move_count += 1
             else:
                 self.dead = True

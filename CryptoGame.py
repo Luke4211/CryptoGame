@@ -413,7 +413,7 @@ def scene_four(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "eve_house.png", conv=True)
     context_screen = py.image.load(os.path.join('backgrounds', 'eve_context' +  '.png' )).convert()
-    eve = core.eve(player, .07, .03, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15, hitbox=90)
+    eve = core.eve(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "eve", 3, 4, 15, hitbox=90)
     
     eve_dia = [core.scenary(window, 400, 100, 
             "dialogue","eve_dia_" + str(i) + ".png") 
@@ -507,7 +507,7 @@ def scene_four(window, clock, speed):
            
         py.display.update()
     
-    
+    '''
     run = True
     cur_t = py.time.get_ticks()
     bg = py.Surface(window.get_size()).convert()
@@ -526,7 +526,9 @@ def scene_four(window, clock, speed):
                 py.quit()
                 quit()
         py.display.update()
-        
+    '''
+    
+    story_screen(window, context_screen)
     #TODO: Add another scene of dialogue before the boss fight
     #TODO: Go back to scene 2 and implement last_jump
     #TODO: Eve needs to shoot lower (or roll boulders)
@@ -537,6 +539,7 @@ def scene_four(window, clock, speed):
     success = True
     eve.aggro = True
     run = True
+
     while run:
         clock.tick(60)
         keys = py.key.get_pressed()
@@ -557,9 +560,14 @@ def scene_four(window, clock, speed):
         
         if eve.hp > 0:
             eve.move()
-            eve_att = eve.attack()
-            if eve_att != -1:
-                projectiles.append(eve_att)
+            #TODO: Undo the mess below
+            eve_att = [eve.attack(), eve.rockfall()]
+            
+            for att in eve_att:
+                if att != -1:
+                    projectiles.append(att)
+
+            
         else:
             eve.dead = True
             
@@ -587,11 +595,11 @@ def scene_four(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 30
+                    player.hp -= 24
             if projectiles[i].rect.colliderect(eve.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    eve.hp -= 17
+                    eve.hp -= 10
         
         if player.hp <= 0:
             run = False
@@ -637,7 +645,25 @@ def player_died(window, clock, level=1):
             
         py.display.update()
         
+def story_screen(window, image):
+    run = True
+    cur_t = py.time.get_ticks()
+    bg = py.Surface(window.get_size()).convert()
+    bg.fill((0,0,0))
+    window.blit(bg, (0,0))
+    while run:
+        window.blit(image, (0,100))
+        keys = py.key.get_pressed()
         
+        if keys[py.K_e] and py.time.get_ticks() - cur_t > 300:
+            run = False
+            
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+        py.display.update()
    
 py.init()
 
