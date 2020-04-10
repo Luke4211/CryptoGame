@@ -672,13 +672,13 @@ def scene_five(window, clock, speed):
     robber2 = core.robber(player, .07, .02, 5, 1300, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber3 = core.robber(player, .07, .02, 5, 0, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
-    #TODO: Add indicator arrow
+    arrow = core.arrow(window, 1965, 380)
     
     msg1 = core.sign(window, 350, 500, "Royal Swamp", "sprites", "sign.png")
      
-    #TODO: Add castle
-     
-    scrolls = [msg1]
+    castle = core.scenary(window, 1790, 240, "sprites", "castle.png")
+    
+    scrolls = [msg1, castle, arrow]
     robbers = [robber1, robber2, robber3]
     scroll = core.scroller(window, player, 'swamp', speed, robbers)
     
@@ -687,7 +687,7 @@ def scene_five(window, clock, speed):
         
     drawers = [scroll]
     drawers += scrolls
-    #TODO: Castle add here
+    drawers.append(castle)
     drawers += robbers
     drawers.append(player)
     
@@ -702,7 +702,7 @@ def scene_five(window, clock, speed):
     run = True
     while run:
         clock.tick(60)
-        
+        print(str(player.true_x))
         if len(robbers) == 0 and first_wave == True:
             first_wave = False
             spawn_robbers(window, player, scroll, drawers, robbers)
@@ -769,7 +769,10 @@ def scene_five(window, clock, speed):
         
         for robber in robbers:
             draw_health(window, robber)
-            
+        
+        if len(robbers) == 0:
+            arrow.bounce()
+            arrow.draw()
         py.display.update()
         
         for event in py.event.get():
