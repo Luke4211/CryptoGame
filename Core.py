@@ -261,7 +261,7 @@ class king(eve):
     
     def __init__(self, *args, **kwargs):
         super(king, self).__init__(*args, **kwargs)
-        self.idle_img = py.image.load(os.path.join('sprites', 'king_idle_left'))
+        self.idle_img = py.image.load(os.path.join('sprites', 'king_idle_left.png'))
         self.idle = True
         
     def draw(self):

@@ -15,13 +15,16 @@ H, W = 750, 1050
 # TODO: Go back and balance Eve fight
 # TODO: fix typo in dialogue
 # TODO: Background music
-def draw_health(window, humanoid):
+def draw_health(window, humanoid, king = False):
         
     width = humanoid.hp
     x = humanoid.x - 30
     y = humanoid.y - 50
     red_rect = py.Rect(x, y, width, 4)
-    blk_rect = py.Rect(x - 5, y - 3 , 110, 10)
+    width = 110
+    if king:
+        width = 160
+    blk_rect = py.Rect(x - 5, y - 3 , width, 10)
     
     if not humanoid.dead:
         py.draw.rect(window, (0,0,0), blk_rect)
@@ -802,10 +805,83 @@ def scene_five(window, clock, speed):
 def scene_six(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
-    king = core.king(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, False, 150, 6, "king_charge", 2, 2, 15, hitbox=60)
+    king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 1, 1915, False, 150, 6, "king_charge", 2, 2, 15, hitbox=60)
     
     #TODO: Add dialogue
+    drawers = [background, king, player]
     last_jump = 0
+    run = True 
+    #TODO: Add dialogue scene here
+    
+    projectiles = []
+    last_attack = 0
+    last_jump = 0
+    success = True
+    king.aggro = True
+    run = True
+    
+    while run:
+        clock.tick(60)
+        
+        keys = py.key.get_pressed()
+        
+        if keys[py.K_d]:
+            if player.x < 970:    
+                player.move(1)
+        if keys[py.K_a]:
+            if player.x > 240:
+                player.move(-1)
+        if keys[py.K_SPACE]:
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()  
+        
+        if keys[py.K_e]:
+            if player.x > 950 and king.dead:
+                run = False
+        if player.is_jump == True:
+            player.jump()
+            
+        #TODO: Move king
+        
+        for draw in drawers:
+            draw.draw()
+        
+        
+        deletes = []
+        for proj in projectiles:
+            if not proj.dead:
+                proj.move()
+                proj.draw()
+            else:
+                deletes.append(proj)
+        for rm in deletes:
+            projectiles.remove(rm)
+            
+        for i in range(len(projectiles)):
+            if projectiles[i].rect.colliderect(player.rect):
+                if not projectiles[i].player:
+                    projectiles[i].dead = True
+                    player.hp -= 24
+            if projectiles[i].rect.colliderect(king.rect):
+                if projectiles[i].player:
+                    projectiles[i].dead = True
+                    king.hp -= 10
+            
+        if player.hp <= 0:
+            run = False
+            success = False
+        
+        draw_health(window, player)
+        draw_health(window, king, king = True)
+        
+        py.display.update() 
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+    return success
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
