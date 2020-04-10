@@ -301,6 +301,9 @@ class scroller(object):
                 
     def add_scrollable(self, scrollable):
         self.scrollables.append(scrollable)
+    
+    def add_enemies(self, monsters):
+        self.enemies += monsters
         
 
 class projectile(object):

@@ -10,6 +10,7 @@ import os
 # TODO: Create a function for each level. 
 
 # TODO: Go back and balance Eve fight
+# TODO: fix typo in dialogue
 
 def draw_health(window, humanoid):
         
@@ -615,7 +616,7 @@ def scene_four(window, clock, speed):
     return success
 
 def scene_four_challenge(window, clock):
-    screen = py.image.load(os.path.join('backgrounds', 'vigenere_4.png'))
+    screen = py.image.load(os.path.join('backgrounds', 'vigenere_5.png'))
     bg = py.Surface(window.get_size()).convert()
     bg.fill((0,0,0))
     window.blit(bg, (0,0))
@@ -648,6 +649,132 @@ def scene_four_challenge(window, clock):
         text = font.render(in_string, True, (255,255,255))
         py.display.update()
     return in_string
+
+def spawn_robbers(player, scroll, drawers, robbers):
+    x1 = player.x - 300
+    x2 = player.x + 300
+    
+    robber1 = core.robber(player, .07, .03, 5, x1, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber2 = core.robber(player, .07, .02, 5, x2, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    
+    robbs = [robber1, robber2]
+    scroll.add_enemies(robbs)
+    drawers += robbers
+    
+    drawers
+def scene_five(window, clock, speed):
+    player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
+    
+    robber1 = core.robber(player, .07, .02, 5, 150, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber2 = core.robber(player, .07, .02, 5, 1300, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber3 = core.robber(player, .07, .02, 5, 0, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    
+    #TODO: Add indicator arrow
+    
+    msg1 = core.sign(window, 350, 500, "Royal Swamp", "sprites", "sign.png")
+     
+    #TODO: Add castle
+     
+    scrolls = [msg1]
+    robbers = [robber1, robber2, robber3]
+    scroll = core.scroller(window, player, 'swamp', speed, robbers)
+    
+    for scroller in scrolls:
+        scroll.add_scrollable(scroller)
+        
+    drawers = [scroll]
+    drawers += scrolls
+    #TODO: Castle add here
+    drawers += robbers
+    drawers.append(player)
+    
+    projectiles = []
+    
+    last_attack = 0
+    last_jump = 0
+    
+    first_wave = True
+    
+    success = True
+    run = True
+    while run:
+        clock.tick(60)
+        
+        if len(robbers) == 0 and first_wave == True:
+            first_wave = False
+            spawn_robbers(player, scroll, drawers, robbers)
+        keys = py.key.get_pressed()
+        if keys[py.K_d]:
+            scroll.move(1)
+        if keys[py.K_a]:
+            scroll.move(-1)
+        if keys[py.K_SPACE]:
+            if py.time.get_ticks() - last_jump > 600:
+                player.jump()
+                last_jump = py.time.get_ticks()
+        if keys[py.K_e]:
+            if player.true_x > 1912 and len(robbers) == 0:
+                run = False
+                
+        dead_robbers = []
+        for robber in robbers:
+            robb_att = robber.attack()
+            if robb_att != -1:
+                projectiles.append(robb_att)
+            
+            if robber.hp <= 0:
+                robber.dead = True
+                dead_robbers.append(robber)
+            robber.move()
+        
+        for robber in dead_robbers:
+            robbers.remove(robber)
+        if player.is_jump == True:
+            player.jump()
+        for draw in drawers:
+            draw.draw()
+        if py.mouse.get_pressed()[0]:
+            if py.time.get_ticks() - last_attack > 700:
+                throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
+                projectiles.append(throwing_star)
+                last_attack = py.time.get_ticks()
+                
+        deletes = []
+        for proj in projectiles:
+            if not proj.dead:
+                proj.move()
+                proj.draw()
+            else:
+                deletes.append(proj)
+        for rm in deletes:
+            projectiles.remove(rm)
+            
+        for i in range(len(projectiles)):
+            if projectiles[i].rect.colliderect(player.rect):
+                if not projectiles[i].player:
+                    projectiles[i].dead = True
+                    player.hp -= 30
+            for robber in robbers:
+                if projectiles[i].rect.colliderect(robber.rect):
+                    if projectiles[i].player:
+                        projectiles[i].dead = True
+                        robber.hp -= 40
+        if player.hp <= 0:
+            run = False
+            success = False
+        draw_health(window, player)
+        
+        for robber in robbers:
+            draw_health(window, robber)
+            
+        py.display.update()
+        
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+    return success
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
@@ -706,11 +833,11 @@ speed = 3
 py.display.set_caption("Cryptogame")
 
 vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
-    for i in range(1,4)]
-'''
+    for i in range(1,8)]
+
 success = scene_one(window, clock, speed)
 
-while(success == False):
+while success == False:
     player_died(window, clock)
     success = scene_one(window, clock, speed)
 scene_two(window, clock, speed)
@@ -722,11 +849,20 @@ while success == False:
     success = scene_three(window, clock, speed)
 
 success = scene_four(window, clock, speed)
-while(success == False):
+while success == False:
     player_died(window, clock)
     success = scene_four(window, clock, speed)
-for i in range(3):
+for i in range(4):
     story_screen(window, vig[i])
-'''
-scene_four_challenge(window, clock)
-    
+
+answer = scene_four_challenge(window, clock)
+while not answer == "eetdgztowt":
+    story_screen(window, vig[6])
+    answer = scene_four_challenge(window, clock)
+
+story_screen(window, vig[5])
+
+success = scene_five(window, clock, speed)
+while success == False:
+    player_died(window, clock, level=3)
+    success = scene_five(window, clock, speed)
