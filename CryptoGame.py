@@ -521,7 +521,7 @@ def scene_four(window, clock, speed):
         py.display.update()
     
     
-    story_screen(window, context_screen)
+    story_screen(window, context_screen, clock)
     #TODO: Add another scene of dialogue before the boss fight
     #TODO: Go back to scene 2 and implement last_jump
     arrow = core.arrow(window, 930, 300)
@@ -653,7 +653,7 @@ def scene_four_challenge(window, clock):
         py.display.update()
     return in_string
 
-def spawn_robbers(player, scroll, drawers, robbers):
+def spawn_robbers(window, player, scroll, drawers, robbers):
     x1 = player.x - 300
     x2 = player.x + 300
     
@@ -705,7 +705,7 @@ def scene_five(window, clock, speed):
         
         if len(robbers) == 0 and first_wave == True:
             first_wave = False
-            spawn_robbers(player, scroll, drawers, robbers)
+            spawn_robbers(window, player, scroll, drawers, robbers)
         keys = py.key.get_pressed()
         if keys[py.K_d]:
             scroll.move(1)
@@ -806,7 +806,7 @@ def player_died(window, clock, level=1):
             
         py.display.update()
         
-def story_screen(window, image):
+def story_screen(window, image, clock):
     run = True
     cur_t = py.time.get_ticks()
     bg = py.Surface(window.get_size()).convert()
@@ -826,3 +826,4 @@ def story_screen(window, image):
                 py.quit()
                 quit()
         py.display.update()
+        
