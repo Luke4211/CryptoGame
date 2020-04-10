@@ -53,7 +53,6 @@ class humanoid(object):
         
         
     def draw(self):
-        #print(str(self.true_x))
         if self.last_dir == 1:
             self.window.blit(self.move_right[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         else:

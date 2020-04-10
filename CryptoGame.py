@@ -51,7 +51,6 @@ def scene_one(window, clock, speed):
     success = True
     run = True        
     while run:
-        print(str(player.true_x))
         clock.tick(60)    
         
         keys = py.key.get_pressed()
@@ -545,6 +544,9 @@ def scene_four(window, clock, speed):
                 player.jump()
                 last_jump = py.time.get_ticks()  
         
+        if keys[py.K_e]:
+            if player.x > 950 and eve.dead:
+                run = False
         if player.is_jump == True:
             player.jump()
         
@@ -611,6 +613,41 @@ def scene_four(window, clock, speed):
                 quit()
         
     return success
+
+def scene_four_challenge(window, clock):
+    screen = py.image.load(os.path.join('backgrounds', 'vigenere_4.png'))
+    bg = py.Surface(window.get_size()).convert()
+    bg.fill((0,0,0))
+    window.blit(bg, (0,0))
+    font = py.font.Font(os.path.join('font', 'AncientModernTales.ttf'), 40)
+    text = font.render('', True, (255,255,255) )
+    
+    text_box = text.get_rect()
+    
+    text_box.center = (500, 470)
+    in_string = ""
+    run = True
+    while run:
+        clock.tick(60)
+        window.blit(screen, (0,100))
+        window.blit(text, text_box)
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+            if event.type == py.KEYDOWN:
+                if event.key == py.K_RETURN:
+                    run = False
+                elif event.key == py.K_BACKSPACE:
+                    if len(in_string) > 0:
+                        in_string = in_string[0:-1]
+                else:
+                    if len(in_string) < 10:
+                        in_string += str(chr(event.key))
+        text = font.render(in_string, True, (255,255,255))
+        py.display.update()
+    return in_string
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
@@ -646,6 +683,7 @@ def story_screen(window, image):
     bg.fill((0,0,0))
     window.blit(bg, (0,0))
     while run:
+        clock.tick(60)
         window.blit(image, (0,100))
         keys = py.key.get_pressed()
         
@@ -666,6 +704,9 @@ window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
 py.display.set_caption("Cryptogame")
+
+vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
+    for i in range(1,4)]
 '''
 success = scene_one(window, clock, speed)
 
@@ -679,8 +720,13 @@ success = scene_three(window, clock, speed)
 while success == False:
     player_died(window, clock, level=2)
     success = scene_three(window, clock, speed)
-'''
+
 success = scene_four(window, clock, speed)
 while(success == False):
     player_died(window, clock)
     success = scene_four(window, clock, speed)
+for i in range(3):
+    story_screen(window, vig[i])
+'''
+scene_four_challenge(window, clock)
+    
