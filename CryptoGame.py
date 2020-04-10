@@ -7,6 +7,9 @@ import pygame as py
 import Core as core
 import os
 
+H, W = 750, 1050
+
+
 # TODO: Create a function for each level. 
 
 # TODO: Go back and balance Eve fight
@@ -823,46 +826,3 @@ def story_screen(window, image):
                 py.quit()
                 quit()
         py.display.update()
-   
-py.init()
-
-H, W = 750, 1050
-window = py.display.set_mode((W,H))
-clock = py.time.Clock()
-speed = 3
-py.display.set_caption("Cryptogame")
-
-vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
-    for i in range(1,8)]
-
-success = scene_one(window, clock, speed)
-
-while success == False:
-    player_died(window, clock)
-    success = scene_one(window, clock, speed)
-scene_two(window, clock, speed)
-
-
-success = scene_three(window, clock, speed)
-while success == False:
-    player_died(window, clock, level=2)
-    success = scene_three(window, clock, speed)
-
-success = scene_four(window, clock, speed)
-while success == False:
-    player_died(window, clock)
-    success = scene_four(window, clock, speed)
-for i in range(4):
-    story_screen(window, vig[i])
-
-answer = scene_four_challenge(window, clock)
-while not answer == "eetdgztowt":
-    story_screen(window, vig[6])
-    answer = scene_four_challenge(window, clock)
-
-story_screen(window, vig[5])
-
-success = scene_five(window, clock, speed)
-while success == False:
-    player_died(window, clock, level=3)
-    success = scene_five(window, clock, speed)

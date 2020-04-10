@@ -9,11 +9,11 @@ import os
 import pygame as py
 import CryptoGame as cg
 py.init()
-
 H, W = 750, 1050
 window = py.display.set_mode((W,H))
 clock = py.time.Clock()
 speed = 3
+
 py.display.set_caption("Cryptogame")
 
 vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
