@@ -10,7 +10,7 @@ import random
 class humanoid(object):
     def __init__(self, x, y, height, width, window, speed, 
                  bg_width, scrolling, hp, strength, image,
-                 num_frames, seq_len, jump_mult, friendly=True, hitbox=45):
+                 num_frames, seq_len, jump_mult, friendly=True, hitbox=45, deflect = False):
         self.x = x
         self.y = y
         self.height = height
@@ -25,7 +25,14 @@ class humanoid(object):
         self.jump_mult = jump_mult
         self.dead = False
         self.rect = py.rect.Rect((x,y), (hitbox,hitbox))
-        
+        self.unlocked = deflect
+        self.cool = 3000
+        self.shield = -1
+        if self.unlocked:
+            self.shield = py.image.load(os.path.join('sprites', 'shield.png')) 
+        self.deflecting = False
+        self.last_deflect = 0
+        self.deflect_duration = 1000
         
         sequence = []
         
@@ -53,6 +60,11 @@ class humanoid(object):
         
         
     def draw(self):
+        if self.deflecting:
+            self.window.blit(self.shield, (self.x - 10, self.y - 15))
+            if (py.time.get_ticks() - self.last_deflect) > self.deflect_duration:
+                self.deflecting = False
+                
         if self.last_dir == 1:
             self.window.blit(self.move_right[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         else:
@@ -113,12 +125,19 @@ class humanoid(object):
         else:
             return False
     
+    
 class hero(humanoid):
-    def __init___(self, **kwargs):
+    def __init__(self, *args, **kwargs):
         
-        super(hero, self).__init__(**kwargs)
+        super(hero, self).__init__(*args, **kwargs)
         
-         
+    def deflect(self):
+        if self.unlocked:
+            self.deflecting = True
+            self.last_deflect = py.time.get_ticks()
+    
+    def cooldown(self):
+        return self.cool - (py.time.get_ticks() - self.last_deflect)
 
 #TODO: Fix the scrolling speed issue here. Subtract from player speed
         #Robber speed and move that much
@@ -251,6 +270,7 @@ class king(eve):
         else:
             super(king, self).draw()
     
+    #TODO: Add code for his lunge attack, he will be melee only with mobs
 class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]

@@ -29,6 +29,20 @@ def draw_health(window, humanoid):
         if width > 0:
             py.draw.rect(window, (255,0,0), red_rect)
 
+def draw_cooldown(window, humanoid):
+    
+    width = humanoid.cooldown() // 30
+    
+    x = humanoid.x - 30
+    y = humanoid.y - 65
+    blue_rect = py.Rect(x, y, width, 4)
+    blk_rect = py.Rect(x - 5, y - 3 , 110, 10)
+    
+    if not humanoid.dead:
+        py.draw.rect(window, (0,0,0), blk_rect)
+    
+        if width > 0:
+            py.draw.rect(window, (0,0,255), blue_rect)
 # Level One ~ Haunted Wood Fdorest
 def scene_one(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
@@ -666,8 +680,7 @@ def spawn_robbers(window, player, scroll, drawers, robbers):
     
     drawers
 def scene_five(window, clock, speed):
-    player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4)
-    
+    player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4, deflect = True)
     robber1 = core.robber(player, .07, .02, 5, 150, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber2 = core.robber(player, .07, .02, 5, 1300, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     robber3 = core.robber(player, .07, .02, 5, 0, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
@@ -741,7 +754,10 @@ def scene_five(window, clock, speed):
                 throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
-                
+        if py.mouse.get_pressed()[2]:
+            print("works")
+            if player.cooldown() <= 0:
+                player.deflect()
         deletes = []
         for proj in projectiles:
             if not proj.dead:
@@ -756,7 +772,8 @@ def scene_five(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 30
+                    if not player.deflecting:
+                        player.hp -= 30
             for robber in robbers:
                 if projectiles[i].rect.colliderect(robber.rect):
                     if projectiles[i].player:
@@ -766,7 +783,7 @@ def scene_five(window, clock, speed):
             run = False
             success = False
         draw_health(window, player)
-        
+        draw_cooldown(window, player)
         for robber in robbers:
             draw_health(window, robber)
         
@@ -784,10 +801,11 @@ def scene_five(window, clock, speed):
 
 def scene_six(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
-    background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)
+    background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
+    king = core.king(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, False, 150, 6, "king_charge", 2, 2, 15, hitbox=60)
     
-    king = core.king(player, .07, .02, 5, 800, 450, H, W, window, 1, 1915, True, 100, 5, "king_charge", 2, 2, 15, hitbox=60)
-    
+    #TODO: Add dialogue
+    last_jump = 0
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
