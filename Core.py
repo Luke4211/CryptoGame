@@ -150,7 +150,7 @@ class robber(humanoid):
         self.att_speed = att_speed
         self.hero = hero
         self.norm_speed = self.speed 
-        self.last_attack = py.time.get_ticks()
+        self.last_attack = 0
         self.last_jump = py.time.get_ticks()
         #random.seed()
         
@@ -168,7 +168,7 @@ class robber(humanoid):
             
     
                 
-            if abs(diff) < 40:
+            if abs(diff) < 29:
                 direction = 0
             elif diff > 0:
                 direction = 1
@@ -263,13 +263,49 @@ class king(eve):
         super(king, self).__init__(*args, **kwargs)
         self.idle_img = py.image.load(os.path.join('sprites', 'king_idle_left.png'))
         self.idle = True
+        self.attack_timer = 1000
         
+        self.attacking = False      
+        self.attack_animation = [py.image.load(os.path.join('sprites', 'king_lunge_' + str(i) + '.png')) for i in range(1,5)]
+        tmp = [None]*(2*len(self.attack_animation))
+        tmp[::2] = self.attack_animation
+        tmp[1::2] = self.attack_animation
+        self.attack_animation = tmp
+        self.attack_count = 0
     def draw(self):
         if self.idle:
             self.window.blit(self.idle_img, (self.x, self.y))
+        elif self.attacking == True:
+            if self.last_dir == 1:
+                self.window.blit(self.attack_animation[self.attack_count], (self.x, self.y))
+            else:
+                self.window.blit(py.transform.flip(self.attack_animation[self.attack_count], True, False), (self.x, self.y))
+            if self.attack_count == 3:
+                self.attack_count = 0
+                self.attacking = False
+            else:
+                self.attack_count += 1
         else:
             super(king, self).draw()
     
+    def move(self):
+        if (py.time.get_ticks() - self.last_attack) > self.attack_timer:
+            super(king, self).move()
+    
+    def attack(self):
+        rtn = False
+        if not self.idle:
+            diff_x = abs(self.hero.x - self.x)
+            diff_y = abs(self.hero.y - self.y)
+            if diff_x < 30 and diff_y < 70 and (py.time.get_ticks() - self.last_attack) > self.attack_timer:
+                rtn = True
+                self.attacking = True
+                self.last_attack = py.time.get_ticks()
+        return rtn
+    
+    def jump(self):
+        self.is_jump = False
+        
     #TODO: Add code for his lunge attack, he will be melee only with mobs
 class wizard(object):
     

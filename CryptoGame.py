@@ -166,6 +166,7 @@ def scene_two(window, clock, speed):
     dialogue[1::2] = hero_dia    
     drawers = [background, wizard, player]
    
+    last_jump = 0
     run = True   
     while run:
         clock.tick(60)
@@ -177,7 +178,9 @@ def scene_two(window, clock, speed):
         if keys[py.K_a]:
             player.move(-1)
         if keys[py.K_SPACE]:
-            player.jump()        
+            if py.time.get_ticks() - last_jump > 600:    
+                player.jump()       
+                last_jump = py.time.get_ticks()
         if player.true_x > 322:
             run = False
             
@@ -716,7 +719,7 @@ def scene_five(window, clock, speed):
     run = True
     while run:
         clock.tick(60)
-        print(str(player.true_x))
+        
         if len(robbers) == 0 and first_wave == True:
             first_wave = False
             spawn_robbers(window, player, scroll, drawers, robbers)
@@ -756,7 +759,6 @@ def scene_five(window, clock, speed):
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
         if py.mouse.get_pressed()[2]:
-            print("works")
             if player.cooldown() <= 0:
                 player.deflect()
         deletes = []
@@ -803,7 +805,7 @@ def scene_five(window, clock, speed):
 def scene_six(window, clock, speed):
     player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
     background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
-    king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 1, 1915, False, 150, 6, "king_charge", 2, 2, 15, hitbox=60)
+    king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 2, 1915, False, 150, 6, "king_charge", 2, 6, 4, hitbox=60)
     
     #TODO: Add dialogue
     drawers = [background, king, player]
@@ -816,6 +818,7 @@ def scene_six(window, clock, speed):
     last_jump = 0
     success = True
     king.aggro = True
+    king.idle = False
     run = True
     
     while run:
@@ -842,6 +845,11 @@ def scene_six(window, clock, speed):
             
         #TODO: Move king
         
+        king.move()
+        k_att = king.attack()
+        if k_att:
+            player.hp -= 30
+            print("Attack")
         for draw in drawers:
             draw.draw()
         
@@ -860,11 +868,11 @@ def scene_six(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 24
+                    player.hp -= 10
             if projectiles[i].rect.colliderect(king.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    king.hp -= 10
+                    king.hp -= 15
             
         if player.hp <= 0:
             run = False
@@ -919,7 +927,7 @@ def story_screen(window, image, clock):
         window.blit(image, (0,100))
         keys = py.key.get_pressed()
         
-        if keys[py.K_e] and py.time.get_ticks() - cur_t > 300:
+        if keys[py.K_e] and py.time.get_ticks() - cur_t > 600:
             run = False
             
         for event in py.event.get():

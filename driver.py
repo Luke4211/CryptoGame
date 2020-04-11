@@ -19,6 +19,7 @@ py.display.set_caption("Cryptogame")
 new_ability = py.image.load(os.path.join('backgrounds', 'new_ability.png')).convert()
 vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
     for i in range(1,8)]
+
 '''
 success = cg.scene_one(window, clock, speed)
 
@@ -48,12 +49,12 @@ while not answer == "eetdgztowt":
     answer = cg.scene_four_challenge(window, clock)
 
 cg.story_screen(window, vig[5], clock)
-'''
+
 success = cg.scene_five(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=3)
     success = cg.scene_five(window, clock, speed)
-
+'''
 success = cg.scene_six(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)
