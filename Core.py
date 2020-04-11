@@ -289,8 +289,9 @@ class king(eve):
             super(king, self).draw()
     
     def move(self):
-        if (py.time.get_ticks() - self.last_attack) > self.attack_timer:
-            super(king, self).move()
+        if not self.idle:
+            if (py.time.get_ticks() - self.last_attack) > self.attack_timer:
+                super(king, self).move()
     
     def attack(self):
         rtn = False

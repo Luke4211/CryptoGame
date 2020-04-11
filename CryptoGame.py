@@ -848,12 +848,21 @@ def scene_six(window, clock, speed):
         king.move()
         k_att = king.attack()
         if k_att:
-            player.hp -= 30
-            print("Attack")
+            if not player.deflecting:
+                player.hp -= 30
         for draw in drawers:
             draw.draw()
         
-        
+        if py.mouse.get_pressed()[0]:
+            if py.time.get_ticks() - last_attack > 700:
+                throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
+                projectiles.append(throwing_star)
+                last_attack = py.time.get_ticks()
+        if py.mouse.get_pressed()[2]:
+            if player.cooldown() <= 0:
+                print('uh')
+                player.deflect()
+            
         deletes = []
         for proj in projectiles:
             if not proj.dead:
@@ -868,7 +877,8 @@ def scene_six(window, clock, speed):
             if projectiles[i].rect.colliderect(player.rect):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
-                    player.hp -= 10
+                    if not player.deflecting:
+                        player.hp -= 10
             if projectiles[i].rect.colliderect(king.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
@@ -877,8 +887,12 @@ def scene_six(window, clock, speed):
         if player.hp <= 0:
             run = False
             success = False
-        
+        if king.hp <= 0:
+            king.hp = 0
+            king.idle = True
+            king.aggro = True
         draw_health(window, player)
+        draw_cooldown(window, player)
         draw_health(window, king, king = True)
         
         py.display.update() 
