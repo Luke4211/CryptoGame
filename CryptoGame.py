@@ -19,10 +19,11 @@ def draw_health(window, humanoid, king = False):
     x = humanoid.x - 30
     y = humanoid.y - 50
     red_rect = py.Rect(x, y, width, 4)
-    width = 110
+    
+    w = 110
     if king:
-        width = 160
-    blk_rect = py.Rect(x - 5, y - 3 , width, 10)
+        w = 160
+    blk_rect = py.Rect(x - 5, y - 3 , w, 10)
     
     if not humanoid.dead:
         py.draw.rect(window, (0,0,0), blk_rect)
@@ -671,18 +672,19 @@ def scene_four_challenge(window, clock):
         py.display.update()
     return in_string
 
-def spawn_robbers(window, player, scroll, drawers, robbers):
+def spawn_robbers(window, player, drawers, robbers, scroll=None, y=600):
     x1 = player.x - 300
     x2 = player.x + 300
     
-    robber1 = core.robber(player, .07, .03, 5, x1, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
-    robber2 = core.robber(player, .07, .02, 5, x2, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber1 = core.robber(player, .07, .03, 5, x1, y, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+    robber2 = core.robber(player, .07, .02, 5, x2, y, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
     
     robbs = [robber1, robber2]
-    scroll.add_enemies(robbs)
-    drawers += robbers
-    
-    drawers
+    if not scroll == None:
+        scroll.add_enemies(robbs)
+    drawers.extend(robbers)
+    if scroll == None:
+        robbers += robbs
 def scene_five(window, clock, speed):
     player = core.hero(500,600, H, W, window, speed, 1915, True, 100, 5, "hero", 3, 4, 4, deflect = True)
     robber1 = core.robber(player, .07, .02, 5, 150, 600, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
@@ -722,7 +724,7 @@ def scene_five(window, clock, speed):
         
         if len(robbers) == 0 and first_wave == True:
             first_wave = False
-            spawn_robbers(window, player, scroll, drawers, robbers)
+            spawn_robbers(window, player, drawers, robbers, scroll=scroll)
         keys = py.key.get_pressed()
         if keys[py.K_d]:
             scroll.move(1)
@@ -803,7 +805,7 @@ def scene_five(window, clock, speed):
     return success
 
 def scene_six(window, clock, speed):
-    player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4)
+    player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4, deflect = True)
     background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
     king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 2, 1915, False, 150, 6, "king_charge", 2, 6, 4, hitbox=60)
     
@@ -814,11 +816,13 @@ def scene_six(window, clock, speed):
     #TODO: Add dialogue scene here
     
     projectiles = []
+    robbers = []
     last_attack = 0
     last_jump = 0
     success = True
     king.aggro = True
     king.idle = False
+    last_spawn = py.time.get_ticks()
     run = True
     
     while run:
@@ -843,24 +847,53 @@ def scene_six(window, clock, speed):
         if player.is_jump == True:
             player.jump()
             
-        #TODO: Move king
+        dead_robbers = []
+        for robber in robbers:
+            robb_att = robber.attack()
+            if robb_att != -1:
+                projectiles.append(robb_att)
+            
+            if robber.hp <= 0:
+                robber.dead = True
+                dead_robbers.append(robber)
+                if player.hp < 100:
+                    if player.hp + 20 > 100:
+                        player.hp = 100
+                    else:
+                        player.hp += 20
+            robber.move()
+        
+        for robber in dead_robbers:
+            robbers.remove(robber)
         
         king.move()
         k_att = king.attack()
         if k_att:
             if not player.deflecting:
                 player.hp -= 30
+        if (py.time.get_ticks() - last_spawn) > 6000 and king.hp > 0:
+            
+            x1 = player.x - 300
+            x2 = player.x + 300
+    
+            robber1 = core.robber(player, .07, .02, 5, x1, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+            robber2 = core.robber(player, .07, .02, 5, x2, 500, H, W, window, 1, 1915, True, 100, 5, "robber", 3, 4, 15)
+            robb = [robber1, robber2]
+            drawers.extend(robb)
+            robbers.extend(robb)
+            last_spawn = py.time.get_ticks()
+            
+        
         for draw in drawers:
             draw.draw()
         
         if py.mouse.get_pressed()[0]:
-            if py.time.get_ticks() - last_attack > 700:
+            if py.time.get_ticks() - last_attack > 500:
                 throwing_star = core.projectile(window, player.x, player.y, player.attack_speed, player.last_dir)
                 projectiles.append(throwing_star)
                 last_attack = py.time.get_ticks()
         if py.mouse.get_pressed()[2]:
             if player.cooldown() <= 0:
-                print('uh')
                 player.deflect()
             
         deletes = []
@@ -878,11 +911,18 @@ def scene_six(window, clock, speed):
                 if not projectiles[i].player:
                     projectiles[i].dead = True
                     if not player.deflecting:
-                        player.hp -= 10
+                        player.hp -= 15
+                        king.hp += 5
             if projectiles[i].rect.colliderect(king.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    king.hp -= 15
+                    king.hp -= 7
+            
+            for robber in robbers:
+                if projectiles[i].rect.colliderect(robber.rect):
+                    if projectiles[i].player:
+                        projectiles[i].dead = True
+                        robber.hp -= 50
             
         if player.hp <= 0:
             run = False
@@ -891,10 +931,20 @@ def scene_six(window, clock, speed):
             king.hp = 0
             king.idle = True
             king.aggro = True
+        else:
+            king.idle = False
+            king.aggro = True
+            draw_health(window, king, king = True)
+            rock = king.rockfall()
+            
+            if rock != -1:
+                projectiles.append(rock)
+            
         draw_health(window, player)
         draw_cooldown(window, player)
-        draw_health(window, king, king = True)
         
+        for robber in robbers:
+            draw_health(window, robber)
         py.display.update() 
         for event in py.event.get():
             if event.type == py.QUIT:

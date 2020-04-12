@@ -49,12 +49,12 @@ while not answer == "eetdgztowt":
     answer = cg.scene_four_challenge(window, clock)
 
 cg.story_screen(window, vig[5], clock)
-'''
+
 success = cg.scene_five(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=3)
     success = cg.scene_five(window, clock, speed)
-
+'''
 success = cg.scene_six(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)

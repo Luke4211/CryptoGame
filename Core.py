@@ -261,9 +261,9 @@ class king(eve):
     
     def __init__(self, *args, **kwargs):
         super(king, self).__init__(*args, **kwargs)
-        self.idle_img = py.image.load(os.path.join('sprites', 'king_idle_left.png'))
+        self.idle_img = py.image.load(os.path.join('sprites', 'king_idle.png'))
         self.idle = True
-        self.attack_timer = 1000
+        self.attack_timer = 2000
         
         self.attacking = False      
         self.attack_animation = [py.image.load(os.path.join('sprites', 'king_lunge_' + str(i) + '.png')) for i in range(1,5)]
@@ -272,9 +272,14 @@ class king(eve):
         tmp[1::2] = self.attack_animation
         self.attack_animation = tmp
         self.attack_count = 0
+        
+        
     def draw(self):
         if self.idle:
-            self.window.blit(self.idle_img, (self.x, self.y))
+            if self.last_dir == -1:               
+                self.window.blit(self.idle_img, (self.x, self.y))
+            else:
+                self.window.blit(py.transform.flip(self.idle_img, True, False), (self.x, self.y))
         elif self.attacking == True:
             if self.last_dir == 1:
                 self.window.blit(self.attack_animation[self.attack_count], (self.x, self.y))
@@ -302,6 +307,7 @@ class king(eve):
                 rtn = True
                 self.attacking = True
                 self.last_attack = py.time.get_ticks()
+            
         return rtn
     
     def jump(self):
