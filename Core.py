@@ -229,15 +229,20 @@ class eve(robber):
                     self.last_attack = py.time.get_ticks()
             return proj
     
-    def rockfall(self):
+    def rockfall(self, img=0):
         proj = -1
         
         if not self.dead:
             att = random.random()
             
             if att <= self.att_rate and py.time.get_ticks() - self.last_rockfall > 500:
-                proj = falling_rock(self.window, self.hero.x, 50, 4, 1, player=False, 
-                                    image = "boulder", num_frames = 1)
+                if img == 0:
+                    proj = falling_rock(self.window, self.hero.x, 50, 4, 1, player=False, 
+                                        image = "boulder", num_frames = 1)
+                else:
+                    proj = falling_rock(self.window, self.hero.x, 50, 4, 1, player=False, 
+                                        image = 'bld_' + str(img), num_frames = 1)
+                
                 self.last_rockfall = py.time.get_ticks()
         return proj
     def move(self):
@@ -264,6 +269,8 @@ class king(eve):
         self.idle_img = py.image.load(os.path.join('sprites', 'king_idle.png'))
         self.idle = True
         self.attack_timer = 2000
+        
+        
         
         self.attacking = False      
         self.attack_animation = [py.image.load(os.path.join('sprites', 'king_lunge_' + str(i) + '.png')) for i in range(1,5)]
@@ -312,8 +319,7 @@ class king(eve):
     
     def jump(self):
         self.is_jump = False
-        
-    #TODO: Add code for his lunge attack, he will be melee only with mobs
+    
 class wizard(object):
     
     sequence = [1,1,1,1,1,1,1, 2,2,2,2,2,2,2, 3,3,3,3,3,3,3, 4,4,4,4,4,4,4, 3,3,3,3,3,3,3, 2,2,2,2,2,2,2]

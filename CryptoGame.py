@@ -747,6 +747,12 @@ def scene_five(window, clock, speed):
             if robber.hp <= 0:
                 robber.dead = True
                 dead_robbers.append(robber)
+                
+                if player.hp < 100:
+                    if player.hp + 15 > 100:
+                        player.hp = 100
+                    else:
+                        player.hp += 15
             robber.move()
         
         for robber in dead_robbers:
@@ -822,6 +828,8 @@ def scene_six(window, clock, speed):
     success = True
     king.aggro = True
     king.idle = False
+    
+    rock_count = 1
     last_spawn = py.time.get_ticks()
     run = True
     
@@ -856,7 +864,7 @@ def scene_six(window, clock, speed):
                 robber.dead = True
                 dead_robbers.append(robber)
                 if player.hp < 100:
-                    if player.hp + 20 > 100:
+                    if player.hp + 15 > 100:
                         player.hp = 100
                     else:
                         player.hp += 15
@@ -934,8 +942,19 @@ def scene_six(window, clock, speed):
             king.idle = False
             king.aggro = True
             draw_health(window, king, king = True)
-            rock = king.rockfall()
             
+            if rock_count < 5:
+                
+                rock = king.rockfall(rock_count)
+                if rock != -1:
+                    rock_count += 1
+            elif rock_count > 8:
+                rock_count = 1
+                rock = king.rockfall()
+            else:
+                rock = king.rockfall()
+                if rock != -1:
+                    rock_count += 1
             if rock != -1:
                 projectiles.append(rock)
             
