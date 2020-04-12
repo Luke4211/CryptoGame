@@ -805,7 +805,7 @@ def scene_five(window, clock, speed):
     return success
 
 def scene_six(window, clock, speed):
-    player = core.hero(250,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4, deflect = True)
+    player = core.hero(351,500, H, W, window, speed, 1050, False, 100, 5, "hero", 3, 4, 4, deflect = True)
     background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
     king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 2, 1915, False, 150, 6, "king_charge", 2, 6, 4, hitbox=60)
     
@@ -827,14 +827,13 @@ def scene_six(window, clock, speed):
     
     while run:
         clock.tick(60)
-        
         keys = py.key.get_pressed()
         
         if keys[py.K_d]:
-            if player.x < 970:    
+            if player.x < 820:    
                 player.move(1)
         if keys[py.K_a]:
-            if player.x > 240:
+            if player.x > 350:
                 player.move(-1)
         if keys[py.K_SPACE]:
             if py.time.get_ticks() - last_jump > 600:
@@ -860,7 +859,7 @@ def scene_six(window, clock, speed):
                     if player.hp + 20 > 100:
                         player.hp = 100
                     else:
-                        player.hp += 20
+                        player.hp += 15
             robber.move()
         
         for robber in dead_robbers:
