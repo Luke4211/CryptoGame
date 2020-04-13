@@ -34,14 +34,14 @@ success = cg.scene_three(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=2)
     success = cg.scene_three(window, clock, speed)
-
+'''
 success = cg.scene_four(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)
     success = cg.scene_four(window, clock, speed)
 
 cg.story_screen(window, new_ability, clock)
-for i in range(4):
+for i in range(3):
     cg.story_screen(window, vig[i], clock)
 
 answer = cg.scene_four_challenge(window, clock)
@@ -55,7 +55,7 @@ success = cg.scene_five(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=3)
     success = cg.scene_five(window, clock, speed)
-'''
+
 success = cg.scene_six(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)

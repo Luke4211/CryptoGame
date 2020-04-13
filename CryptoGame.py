@@ -1004,7 +1004,7 @@ def scene_six(window, clock, speed):
             if projectiles[i].rect.colliderect(king.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
-                    king.hp -= 70
+                    king.hp -= 7
             
             for robber in robbers:
                 if projectiles[i].rect.colliderect(robber.rect):
