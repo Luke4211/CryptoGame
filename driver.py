@@ -61,3 +61,6 @@ while success == False:
     cg.player_died(window, clock)
     success = cg.scene_six(window, clock, speed)
 cg.story_screen(window, congrats, clock)
+
+py.quit()
+quit()
