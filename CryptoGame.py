@@ -10,7 +10,6 @@ import os
 H, W = 750, 1050
 
 
-# TODO: Create a function for each level. 
 
 # TODO: Background music
 def draw_health(window, humanoid, king = False):
@@ -541,8 +540,6 @@ def scene_four(window, clock, speed):
     
     
     story_screen(window, context_screen, clock)
-    #TODO: Add another scene of dialogue before the boss fight
-    #TODO: Go back to scene 2 and implement last_jump
     arrow = core.arrow(window, 930, 300)
     
     projectiles = []
@@ -575,7 +572,6 @@ def scene_four(window, clock, speed):
         
         if eve.hp > 0:
             eve.move()
-            #TODO: Undo the mess below
             eve_att = [eve.attack(), eve.rockfall()]
             
             for att in eve_att:
@@ -823,17 +819,17 @@ def scene_six(window, clock, speed):
         "dialogue", "hero_end_" + str(i) + ".png") 
         for i in range(1,3)]
     
-    dialogue = [None]*(len(king_dia) + len(hero_dia))
-    dialogue[::2] = king_dia
-    dialogue[1::2] = hero_dia
+    dialogue_1 = [None]*(len(king_dia) + len(hero_dia))
+    dialogue_1[::2] = king_dia
+    dialogue_1[1::2] = hero_dia
     
+  
     context = [py.image.load(os.path.join("backgrounds", "final_" + str(i) + ".png")).convert()
         for i in range (1,4)]
     
     drawers = [background, king, player]
     last_jump = 0
     run = True 
-    #TODO: Add dialogue scene here
     
     while run:
         clock.tick(60)
@@ -875,7 +871,7 @@ def scene_six(window, clock, speed):
                      
         for draw in drawers:
             draw.draw()
-        dialogue[cur_dia].draw()
+        dialogue_1[cur_dia].draw()
         if player.is_jump == True:
             player.jump()
             
@@ -1033,6 +1029,10 @@ def scene_six(window, clock, speed):
                 dirr = -1
             
             king.last_dir = dirr
+            
+            if len(robbers) == 0 and player.hp > 0:
+                run = False
+                player.last_dir = 1
         else:
             king.idle = False
             king.aggro = True
@@ -1064,7 +1064,141 @@ def scene_six(window, clock, speed):
                 run = False
                 py.quit()
                 quit()
+    if success == True:
+        run = True
+        hero_dia_2 = core.scenary(window, player.x - 280, 170,
+            "dialogue", "hero_end_3.png")
+        
+        wiz_dia = [core.scenary(window, 600, 30,
+            "dialogue", "wizard_end_" + str(i) + ".png") 
+            for i in range(1,3)]
+        
+        dialogue_2 = []
+        dialogue_2.append(wiz_dia[0])
+        dialogue_2.append(hero_dia_2)
+        dialogue_2.append(wiz_dia[1])
+        
+        cur_dia = 0
+        last_enter = py.time.get_ticks()
+        while run:
+            clock.tick(60)
+            wizard.move(0)
+            keys = py.key.get_pressed()
+                         
+            for draw in drawers:
+                draw.draw()
+            dialogue_2[cur_dia].draw()
+            if player.is_jump == True:
+                player.jump()
+                
+            if keys[py.K_e]:
+                if py.time.get_ticks() - last_enter > 1000:             
+                    cur_dia += 1
+                    last_enter = py.time.get_ticks()
+                    if cur_dia > 2:
+                        run = False
+            for event in py.event.get():
+                if event.type == py.QUIT:
+                    run = False
+                    py.quit()
+                    quit()
+               
+            py.display.update()
+            
+        answer = final_challenge(window, clock, drawers, player, wizard, wiz_dia[1])
+        wizard_wrong = core.scenary(window, 600, 30, "dialogue", "wizard_end_wrong.png")
+        wizard_right = core.scenary(window, 600, 30, "dialogue", "wizard_end_right.png")
+        run = True
+        over = False
+        if answer == "die wizard":
+            start = py.time.get_ticks()
+            while run:
+                clock.tick(60)
+                
+                for draw in drawers:
+                    draw.draw()
+                wizard_right.draw()
+                
+                keys = py.key.get_pressed()
+                
+                if keys[py.K_e]:
+                    over = True
+                
+                if over == True:
+                    if wizard.x < 1100:
+                        wizard.move(1)
+                    else:
+                        if (py.time.get_ticks() - start) > 800:
+                            run = False
+                else:
+                    wizard.move(0)
+                 
+                py.display.update()
+                for event in py.event.get():
+                    if event.type == py.QUIT:
+                        run = False
+                        py.quit()
+                        quit()
+        else:
+            success = False
+            while run:
+                clock.tick(60)
+                
+                for draw in drawers:
+                    draw.draw()
+                wizard_wrong.draw()
+                
+                keys = py.key.get_pressed()
+                
+                if keys[py.K_e]:
+                    run = False
+                
+                wizard.move(0)
+                 
+                py.display.update()
+                for event in py.event.get():
+                    if event.type == py.QUIT:
+                        run = False
+                        py.quit()
+                        quit()
     return success
+
+def final_challenge(window, clock, drawers, player, wizard, question):
+    run = True
+    player_response = core.sign(window, player.x - 110, 350, "", "dialogue", "hero_dia_5.png", font_size=30)
+    player_response.text_box.center = (player.x - 140, 280)
+    in_string = ""
+    while run:
+        clock.tick(60)
+                     
+        for draw in drawers:
+            draw.draw()
+        player_response.draw()
+        question.draw()
+        
+        wizard.move(0)
+        if player.is_jump == True:
+            player.jump()  
+           
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+            if event.type == py.KEYDOWN:   
+                if event.key == py.K_RETURN:
+                    run = False
+                elif event.key == py.K_BACKSPACE:
+                    if len(in_string) > 0:
+                        in_string = in_string[0:-1]
+                else:
+                    if len(in_string) < 10:
+                        in_string += str(chr(event.key))
+        player_response.change_text(in_string)
+        py.display.update()
+    return in_string
+    
+
 def player_died(window, clock, level=1):
     
     death_screen = py.image.load(os.path.join('backgrounds', 'dead_screen_' + str(level) + '.jpg' )).convert()
@@ -1074,6 +1208,7 @@ def player_died(window, clock, level=1):
     
     bg = bg.convert()
     
+    start = py.time.get_ticks()
     while run:
         clock.tick(60)
         bg.fill((0,0,0))
@@ -1083,7 +1218,8 @@ def player_died(window, clock, level=1):
         keys = py.key.get_pressed()
         
         if keys[py.K_e]:
-            run = False
+            if (py.time.get_ticks() - start) > 700:
+                run = False
         
         for event in py.event.get():
             if event.type == py.QUIT:
@@ -1104,7 +1240,7 @@ def story_screen(window, image, clock):
         window.blit(image, (0,100))
         keys = py.key.get_pressed()
         
-        if keys[py.K_e] and py.time.get_ticks() - cur_t > 600:
+        if keys[py.K_e] and py.time.get_ticks() - cur_t > 800:
             run = False
             
         for event in py.event.get():

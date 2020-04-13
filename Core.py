@@ -41,7 +41,7 @@ class humanoid(object):
                 sequence.append(i)
         
         self.move_right = [py.image.load(os.path.join('sprites', image + '_right_' + str(i) + '.png')) for i in sequence]
-        self.move_left = [py.image.load(os.path.join('sprites', image +  '_left_' + str(i) + '.png')) for i in sequence]
+        
         
         self.move_count = 0
         self.last_dir = 1 # -1 to face left, 1 to face right
@@ -68,7 +68,8 @@ class humanoid(object):
         if self.last_dir == 1:
             self.window.blit(self.move_right[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
         else:
-            self.window.blit(self.move_left[self.move_count%(self.num_frames*self.seq_len)], (self.x, self.y))
+            fl = py.transform.flip( self.move_right[self.move_count%(self.num_frames*self.seq_len)], True, False )
+            self.window.blit(fl, (self.x, self.y))
         
     def move(self, direction):
         rtn = True
