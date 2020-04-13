@@ -22,7 +22,7 @@ vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' 
 
 congrats = py.image.load(os.path.join('backgrounds', 'congrats.png')).convert()
 
-'''
+
 success = cg.scene_one(window, clock, speed)
 
 while success == False:
@@ -34,7 +34,7 @@ success = cg.scene_three(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=2)
     success = cg.scene_three(window, clock, speed)
-'''
+
 success = cg.scene_four(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)
