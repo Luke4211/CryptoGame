@@ -20,7 +20,7 @@ new_ability = py.image.load(os.path.join('backgrounds', 'new_ability.png')).conv
 vig = [py.image.load(os.path.join('backgrounds', 'vigenere_' + str(i) +  '.png' )).convert() 
     for i in range(1,8)]
 
-'''
+
 success = cg.scene_one(window, clock, speed)
 
 while success == False:
@@ -54,7 +54,7 @@ success = cg.scene_five(window, clock, speed)
 while success == False:
     cg.player_died(window, clock, level=3)
     success = cg.scene_five(window, clock, speed)
-'''
+
 success = cg.scene_six(window, clock, speed)
 while success == False:
     cg.player_died(window, clock)

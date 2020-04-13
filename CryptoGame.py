@@ -827,6 +827,8 @@ def scene_six(window, clock, speed):
     dialogue[::2] = king_dia
     dialogue[1::2] = hero_dia
     
+    context = [py.image.load(os.path.join("backgrounds", "final_" + str(i) + ".png")).convert()
+        for i in range (1,4)]
     
     drawers = [background, king, player]
     last_jump = 0
@@ -838,9 +840,11 @@ def scene_six(window, clock, speed):
         
         keys = py.key.get_pressed()
         if keys[py.K_d]:
-            player.move(1)
+            if player.x < 820:
+                player.move(1)
         if keys[py.K_a]:
-            player.move(-1)
+            if player.x > 350:
+                player.move(-1)
         if keys[py.K_SPACE]:
             if py.time.get_ticks() - last_jump > 600:    
                 player.jump()       
@@ -888,7 +892,13 @@ def scene_six(window, clock, speed):
                 quit()
            
         py.display.update()
-        
+    
+    wizard = core.wizard(window, 900, 340, 10)
+    wizard.turn_around()
+    drawers.append(wizard)
+    
+    for i in range(3):
+        story_screen(window, context[i], clock)
     projectiles = []
     robbers = []
     last_attack = 0
@@ -904,7 +914,7 @@ def scene_six(window, clock, speed):
     while run:
         clock.tick(60)
         keys = py.key.get_pressed()
-        
+        wizard.move(0)
         if keys[py.K_d]:
             if player.x < 820:    
                 player.move(1)
