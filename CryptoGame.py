@@ -202,7 +202,7 @@ def scene_two(window, clock, speed):
     wizard.turn_around()
     run = True
     cur_dia = 0
-    last_enter = 0
+    last_enter = py.time.get_ticks()
     while run:
         clock.tick(60)        
         keys = py.key.get_pressed()
@@ -815,12 +815,80 @@ def scene_six(window, clock, speed):
     background = core.scenary(window, 0, 0, "backgrounds", "showdown.png", conv=True)   
     king = core.king(player, .07, .02, 5, 800, 470, H, W, window, 2, 1915, False, 150, 6, "king_charge", 2, 6, 4, hitbox=60)
     
-    #TODO: Add dialogue
+    king_dia = [core.scenary(window, 540, 140,
+        "dialogue", "king_" + str(i) + ".png") 
+        for i in range(1,4)]
+    
+    hero_dia = [core.scenary(window, 170, 150,
+        "dialogue", "hero_end_" + str(i) + ".png") 
+        for i in range(1,3)]
+    
+    dialogue = [None]*(len(king_dia) + len(hero_dia))
+    dialogue[::2] = king_dia
+    dialogue[1::2] = hero_dia
+    
+    
     drawers = [background, king, player]
     last_jump = 0
     run = True 
     #TODO: Add dialogue scene here
     
+    while run:
+        clock.tick(60)
+        
+        keys = py.key.get_pressed()
+        if keys[py.K_d]:
+            player.move(1)
+        if keys[py.K_a]:
+            player.move(-1)
+        if keys[py.K_SPACE]:
+            if py.time.get_ticks() - last_jump > 600:    
+                player.jump()       
+                last_jump = py.time.get_ticks()
+        if player.x > 450:
+            run = False
+        
+        if player.is_jump == True:
+            player.jump()
+        
+        for draw in drawers:
+            draw.draw()
+        py.display.update() 
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+    
+    king.last_dir = -1
+    run = True
+    cur_dia = 0
+    last_enter = py.time.get_ticks()
+    while run:
+        clock.tick(60)
+        
+        keys = py.key.get_pressed()
+                     
+        for draw in drawers:
+            draw.draw()
+        dialogue[cur_dia].draw()
+        if player.is_jump == True:
+            player.jump()
+            
+        if keys[py.K_e]:
+            if py.time.get_ticks() - last_enter > 1000:             
+                cur_dia += 1
+                last_enter = py.time.get_ticks()
+                if cur_dia > 4:
+                    run = False
+        for event in py.event.get():
+            if event.type == py.QUIT:
+                run = False
+                py.quit()
+                quit()
+           
+        py.display.update()
+        
     projectiles = []
     robbers = []
     last_attack = 0
@@ -878,6 +946,10 @@ def scene_six(window, clock, speed):
         if k_att:
             if not player.deflecting:
                 player.hp -= 30
+                if king.hp + 30 <= 150:
+                    king.hp += 30
+                else:
+                    king.hp = 150
         if (py.time.get_ticks() - last_spawn) > 6000 and king.hp > 0:
             
             x1 = player.x - 300
@@ -919,7 +991,10 @@ def scene_six(window, clock, speed):
                     projectiles[i].dead = True
                     if not player.deflecting:
                         player.hp -= 15
-                        king.hp += 5
+                        if king.hp + 5 <= 150:
+                            king.hp += 5
+                        else:
+                            king.hp = 150
             if projectiles[i].rect.colliderect(king.rect):
                 if projectiles[i].player:
                     projectiles[i].dead = True
@@ -938,6 +1013,16 @@ def scene_six(window, clock, speed):
             king.hp = 0
             king.idle = True
             king.aggro = True
+            
+            diff = player.x - king.x
+            
+            dirr = 0
+            if diff > 0:
+                dirr = 1
+            else:
+                dirr = -1
+            
+            king.last_dir = dirr
         else:
             king.idle = False
             king.aggro = True
